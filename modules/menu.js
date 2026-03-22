@@ -11,7 +11,10 @@ const MenuModule = (() => {
 
     function renderCategory(category, items) {
         const container = document.getElementById(category + 'Menu');
-        if (!container) return;
+        if (!container) {
+            console.warn(`Container not found: ${category}Menu`);
+            return;
+        }
 
         container.innerHTML = '';
 
@@ -28,6 +31,7 @@ const MenuModule = (() => {
             return;
         }
 
+        console.log(`Rendering ${category}: ${availableItems.length} items`);
         availableItems.forEach(item => {
             const card = createItemCard(item);
             container.appendChild(card);
@@ -43,10 +47,36 @@ const MenuModule = (() => {
             <h3>${item.name}</h3>
             <p class="price">KSh ${item.price}</p>
             <p class="stock" id="stock-${item.id}">${item.available} ${item.unit || 'available'}</p>
-            <button id="add-btn-${item.id}" class="btn btn-primary btn-sm" onclick="CartModule.add(${item.id}, '${item.name}', ${item.price}, ${item.available})">
-                Add to Cart
-            </button>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+                <button id="add-btn-${item.id}" class="btn btn-primary btn-sm">
+                    Add to Cart
+                </button>
+                <button id="quickorder-btn-${item.id}" class="btn btn-secondary btn-sm">
+                    Quick Order
+                </button>
+            </div>
         `;
+
+        // Add event listeners instead of inline onclick
+        const button = card.querySelector(`#add-btn-${item.id}`);
+        button.addEventListener('click', () => {
+            console.log('Add button clicked for item:', { id: item.id, name: item.name, price: item.price, available: item.available });
+            CartModule.add(item.id, item.name, item.price, item.available);
+        });
+
+        // Quick Order: add item and open cart modal for fast checkout
+        const quickBtn = card.querySelector(`#quickorder-btn-${item.id}`);
+        quickBtn.addEventListener('click', () => {
+            console.log('Quick Order clicked for item:', item.id);
+            CartModule.add(item.id, item.name, item.price, item.available);
+            // open cart modal
+            if (typeof CartModule.show === 'function') {
+                CartModule.show();
+            } else {
+                const modal = document.getElementById('cartModal');
+                if (modal) modal.style.display = 'flex';
+            }
+        });
 
         return card;
     }

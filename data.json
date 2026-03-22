@@ -7,72 +7,23 @@
         "price": 20,
         "available": 40,
         "unit": "pieces",
-        "category": "breakfast",
-        "tags": [
-          "sweet",
-          "vegetarian",
-          "vegan",
-          "light"
-        ],
-        "totalOrders": 23,
-        "calories": 150,
-        "isVegetarian": true,
-        "isVegan": true,
-        "spicyLevel": 0
+        "category": "breakfast"
       },
       {
         "id": 2,
         "name": "Chapati",
         "price": 30,
-        "available": 35,
+        "available": 36,
         "unit": "pieces",
-        "category": "breakfast",
-        "tags": [
-          "vegetarian",
-          "vegan",
-          "light"
-        ],
-        "totalOrders": 15,
-        "calories": 120,
-        "isVegetarian": true,
-        "isVegan": true,
-        "spicyLevel": 0
+        "category": "breakfast"
       },
       {
         "id": 3,
         "name": "Tea",
         "price": 15,
-        "available": 65,
+        "available": 98,
         "unit": "cups",
-        "category": "breakfast",
-        "tags": [
-          "vegetarian",
-          "vegan",
-          "light",
-          "beverage"
-        ],
-        "totalOrders": 45,
-        "calories": 30,
-        "isVegetarian": true,
-        "isVegan": true,
-        "spicyLevel": 0
-      },
-      {
-        "id": 4,
-        "name": "Eggs & Bread",
-        "price": 50,
-        "available": 27,
-        "unit": "plates",
-        "category": "breakfast",
-        "tags": [
-          "vegetarian",
-          "protein-rich"
-        ],
-        "totalOrders": 28,
-        "calories": 350,
-        "isVegetarian": true,
-        "isVegan": false,
-        "spicyLevel": 0
+        "category": "breakfast"
       }
     ],
     "lunch": [
@@ -80,81 +31,17 @@
         "id": 5,
         "name": "Ugali & Beef",
         "price": 120,
-        "available": 23,
+        "available": 28,
         "unit": "plates",
-        "category": "lunch",
-        "tags": [
-          "protein-rich",
-          "savory",
-          "filling"
-        ],
-        "totalOrders": 42,
-        "calories": 650,
-        "isVegetarian": false,
-        "isVegan": false,
-        "spicyLevel": 1
+        "category": "lunch"
       },
       {
         "id": 6,
         "name": "Rice & Chicken",
         "price": 150,
-        "available": 24,
+        "available": 33,
         "unit": "plates",
-        "category": "lunch",
-        "tags": [
-          "protein-rich",
-          "savory",
-          "filling"
-        ],
-        "totalOrders": 38,
-        "calories": 700,
-        "isVegetarian": false,
-        "isVegan": false,
-        "spicyLevel": 1
-      },
-      {
-        "id": 7,
-        "name": "Githeri",
-        "price": 80,
-        "available": 40,
-        "unit": "plates",
-        "category": "lunch",
-        "tags": [
-          "vegetarian",
-          "vegan",
-          "protein-rich",
-          "savory"
-        ],
-        "totalOrders": 32,
-        "calories": 400,
-        "isVegetarian": true,
-        "isVegan": true,
-        "spicyLevel": 0
-      },
-      {
-        "id": 8,
-        "name": "Pilau",
-        "price": 100,
-        "available": 30,
-        "unit": "plates",
-        "category": "lunch",
-        "tags": [
-          "savory",
-          "spicy",
-          "filling"
-        ],
-        "totalOrders": 35,
-        "calories": 550,
-        "isVegetarian": false,
-        "isVegan": false,
-        "spicyLevel": 2
-      },
-      {
-        "id": 14,
-        "name": "Melon",
-        "price": 10,
-        "available": 99,
-        "unit": "pieces"
+        "category": "lunch"
       }
     ],
     "snacks": [
@@ -162,36 +49,9 @@
         "id": 9,
         "name": "Samosa",
         "price": 25,
-        "available": 59,
+        "available": 60,
         "unit": "pieces",
-        "category": "snacks",
-        "tags": [
-          "vegetarian",
-          "spicy",
-          "savory"
-        ],
-        "totalOrders": 52,
-        "calories": 180,
-        "isVegetarian": true,
-        "isVegan": true,
-        "spicyLevel": 2
-      },
-      {
-        "id": 10,
-        "name": "Sausage",
-        "price": 30,
-        "available": 45,
-        "unit": "pieces",
-        "category": "snacks",
-        "tags": [
-          "protein-rich",
-          "savory"
-        ],
-        "totalOrders": 30,
-        "calories": 250,
-        "isVegetarian": false,
-        "isVegan": false,
-        "spicyLevel": 1
+        "category": "snacks"
       },
       {
         "id": 11,
@@ -199,61 +59,7 @@
         "price": 40,
         "available": 50,
         "unit": "cups",
-        "category": "snacks",
-        "tags": [
-          "sweet",
-          "vegetarian",
-          "vegan",
-          "beverage"
-        ],
-        "totalOrders": 40,
-        "calories": 120,
-        "isVegetarian": true,
-        "isVegan": true,
-        "spicyLevel": 0
-      },
-      {
-        "id": 12,
-        "name": "Chips",
-        "price": 80,
-        "available": 3,
-        "unit": "plates",
-        "category": "snacks",
-        "tags": [
-          "vegetarian",
-          "vegan",
-          "savory"
-        ],
-        "totalOrders": 48,
-        "calories": 450,
-        "isVegetarian": true,
-        "isVegan": true,
-        "spicyLevel": 0
-      },
-      {
-        "id": 13,
-        "name": "Smocha",
-        "price": 60,
-        "available": 10,
-        "unit": "pieces",
-        "category": "snacks",
-        "tags": [
-          "vegetarian",
-          "savory",
-          "filling"
-        ],
-        "totalOrders": 25,
-        "calories": 350,
-        "isVegetarian": true,
-        "isVegan": false,
-        "spicyLevel": 1
-      },
-      {
-        "id": 14,
-        "name": "Melon",
-        "price": 10,
-        "available": 99,
-        "unit": "pieces"
+        "category": "snacks"
       }
     ]
   },
@@ -282,6 +88,557 @@
     "topRecommendedItems": []
   },
   "orderHistory": [
+    {
+      "id": 1773743070774,
+      "orderNumber": "TUC-1041",
+      "timestamp": "3/17/2026, 1:24:30 PM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 5,
+          "price": 20,
+          "total": 100
+        },
+        {
+          "id": 2,
+          "name": "Chapati",
+          "quantity": 2,
+          "price": 30,
+          "total": 60
+        },
+        {
+          "id": 3,
+          "name": "Tea",
+          "quantity": 1,
+          "price": 15,
+          "total": 15
+        },
+        {
+          "id": 5,
+          "name": "Ugali & Beef",
+          "quantity": 1,
+          "price": 120,
+          "total": 120
+        },
+        {
+          "id": 6,
+          "name": "Rice & Chicken",
+          "quantity": 1,
+          "price": 150,
+          "total": 150
+        }
+      ],
+      "total": 445,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0741179808",
+      "paymentStatus": "Pending Verification",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "3/17/2026, 1:24:30 PM",
+      "notes": []
+    },
+    {
+      "id": 1773743063699,
+      "orderNumber": "TUC-1040",
+      "timestamp": "3/17/2026, 1:24:23 PM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 5,
+          "price": 20,
+          "total": 100
+        },
+        {
+          "id": 2,
+          "name": "Chapati",
+          "quantity": 2,
+          "price": 30,
+          "total": 60
+        },
+        {
+          "id": 3,
+          "name": "Tea",
+          "quantity": 1,
+          "price": 15,
+          "total": 15
+        },
+        {
+          "id": 5,
+          "name": "Ugali & Beef",
+          "quantity": 1,
+          "price": 120,
+          "total": 120
+        },
+        {
+          "id": 6,
+          "name": "Rice & Chicken",
+          "quantity": 1,
+          "price": 150,
+          "total": 150
+        }
+      ],
+      "total": 445,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0741179808",
+      "paymentStatus": "Pending Verification",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "3/17/2026, 1:24:23 PM",
+      "notes": []
+    },
+    {
+      "id": 1770730070546,
+      "orderNumber": "TUC-1039",
+      "timestamp": "2/10/2026, 4:27:50 PM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 1,
+          "price": 20,
+          "total": 20
+        }
+      ],
+      "total": 20,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0110725771",
+      "paymentStatus": "Pending Verification",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/10/2026, 4:27:50 PM",
+      "notes": []
+    },
+    {
+      "id": 1770730069670,
+      "orderNumber": "TUC-1038",
+      "timestamp": "2/10/2026, 4:27:49 PM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 1,
+          "price": 20,
+          "total": 20
+        }
+      ],
+      "total": 20,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0110725771",
+      "paymentStatus": "Pending Verification",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/10/2026, 4:27:49 PM",
+      "notes": []
+    },
+    {
+      "id": 1770730069472,
+      "orderNumber": "TUC-1037",
+      "timestamp": "2/10/2026, 4:27:49 PM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 1,
+          "price": 20,
+          "total": 20
+        }
+      ],
+      "total": 20,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0110725771",
+      "paymentStatus": "Pending Verification",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/10/2026, 4:27:49 PM",
+      "notes": []
+    },
+    {
+      "id": 1770730069244,
+      "orderNumber": "TUC-1036",
+      "timestamp": "2/10/2026, 4:27:49 PM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 1,
+          "price": 20,
+          "total": 20
+        }
+      ],
+      "total": 20,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0110725771",
+      "paymentStatus": "Pending Verification",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/10/2026, 4:27:49 PM",
+      "notes": []
+    },
+    {
+      "id": 1770730069041,
+      "orderNumber": "TUC-1035",
+      "timestamp": "2/10/2026, 4:27:49 PM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 1,
+          "price": 20,
+          "total": 20
+        }
+      ],
+      "total": 20,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0110725771",
+      "paymentStatus": "Pending Verification",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/10/2026, 4:27:49 PM",
+      "notes": []
+    },
+    {
+      "id": 1770730068074,
+      "orderNumber": "TUC-1034",
+      "timestamp": "2/10/2026, 4:27:48 PM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 1,
+          "price": 20,
+          "total": 20
+        }
+      ],
+      "total": 20,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0110725771",
+      "paymentStatus": "Pending Verification",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/10/2026, 4:27:48 PM",
+      "notes": []
+    },
+    {
+      "id": 1770730065296,
+      "orderNumber": "TUC-1033",
+      "timestamp": "2/10/2026, 4:27:45 PM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 1,
+          "price": 20,
+          "total": 20
+        }
+      ],
+      "total": 20,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0110725771",
+      "paymentStatus": "Pending Verification",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/10/2026, 4:27:45 PM",
+      "notes": []
+    },
+    {
+      "id": 1770727457294,
+      "orderNumber": "TUC-1032",
+      "timestamp": "2/10/2026, 3:44:17 PM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 1,
+          "price": 20,
+          "total": 20
+        }
+      ],
+      "total": 20,
+      "paymentMethod": "cash",
+      "paymentStatus": "Pending Confirmation",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/10/2026, 3:44:17 PM",
+      "notes": []
+    },
+    {
+      "id": 1770659484836,
+      "orderNumber": "TUC-1031",
+      "timestamp": "2/9/2026, 8:51:24 PM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 1,
+          "price": 20,
+          "total": 20
+        }
+      ],
+      "total": 20,
+      "paymentMethod": "cash",
+      "paymentStatus": "Pending Confirmation",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/9/2026, 8:51:24 PM",
+      "notes": []
+    },
+    {
+      "id": 1770659408515,
+      "orderNumber": "TUC-1030",
+      "timestamp": "2/9/2026, 8:50:08 PM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 1,
+          "price": 20,
+          "total": 20
+        }
+      ],
+      "total": 20,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0110725771",
+      "paymentStatus": "Pending Verification",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/9/2026, 8:50:08 PM",
+      "notes": []
+    },
+    {
+      "id": 1770582789186,
+      "orderNumber": "TUC-1029",
+      "timestamp": "2/8/2026, 11:33:09 PM",
+      "items": [
+        {
+          "id": 2,
+          "name": "Chapati",
+          "quantity": 1,
+          "price": 30,
+          "total": 30
+        }
+      ],
+      "total": 30,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0110725771",
+      "paymentStatus": "Paid",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/8/2026, 11:33:09 PM",
+      "notes": []
+    },
+    {
+      "id": 1770466500478,
+      "orderNumber": "TUC-1028",
+      "timestamp": "2/7/2026, 3:15:00 PM",
+      "items": [
+        {
+          "id": 2,
+          "name": "Chapati",
+          "quantity": 12,
+          "price": 30,
+          "total": 360
+        }
+      ],
+      "total": 360,
+      "paymentMethod": "cash",
+      "paymentStatus": "Paid",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/7/2026, 3:15:00 PM",
+      "notes": []
+    },
+    {
+      "id": 1770465400919,
+      "orderNumber": "TUC-1027",
+      "timestamp": "2/7/2026, 2:56:40 PM",
+      "items": [
+        {
+          "id": 11,
+          "name": "Juice",
+          "quantity": 1,
+          "price": 40,
+          "total": 40
+        }
+      ],
+      "total": 40,
+      "paymentMethod": "cash",
+      "paymentStatus": "Paid",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/7/2026, 2:56:40 PM",
+      "notes": []
+    },
+    {
+      "id": 1770462154779,
+      "orderNumber": "TUC-1026",
+      "timestamp": "2/7/2026, 2:02:34 PM",
+      "items": [
+        {
+          "id": 4,
+          "name": "Samosa",
+          "quantity": 1,
+          "price": 25
+        }
+      ],
+      "total": 25,
+      "paymentMethod": "cash",
+      "paymentStatus": "Paid",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/7/2026, 2:02:34 PM",
+      "notes": []
+    },
+    {
+      "id": 1770462057000,
+      "orderNumber": "TUC-1025",
+      "timestamp": "2/7/2026, 2:00:57 PM",
+      "items": [
+        {
+          "id": 3,
+          "name": "Tea",
+          "quantity": 1,
+          "price": 15
+        }
+      ],
+      "total": 15,
+      "paymentMethod": "cash",
+      "paymentStatus": "Confirmed",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/7/2026, 2:00:57 PM",
+      "notes": []
+    },
+    {
+      "id": 1770462011008,
+      "orderNumber": "TUC-1024",
+      "timestamp": "2/7/2026, 2:00:11 PM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 1,
+          "price": 20,
+          "total": 20
+        }
+      ],
+      "total": 20,
+      "paymentMethod": "cash",
+      "paymentStatus": "Confirmed",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/7/2026, 2:00:11 PM",
+      "notes": []
+    },
+    {
+      "id": 1770461785634,
+      "orderNumber": "TUC-1023",
+      "timestamp": "2/7/2026, 1:56:25 PM",
+      "items": [
+        {
+          "id": 3,
+          "name": "Tea",
+          "quantity": 1,
+          "price": 15
+        }
+      ],
+      "total": 15,
+      "paymentMethod": "cash",
+      "paymentStatus": "Confirmed",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/7/2026, 1:56:25 PM",
+      "notes": []
+    },
+    {
+      "id": 1770461301159,
+      "orderNumber": "TUC-1022",
+      "timestamp": "2/7/2026, 1:48:21 PM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 2,
+          "price": 20,
+          "total": 40
+        },
+        {
+          "id": 2,
+          "name": "Chapati",
+          "quantity": 14,
+          "price": 30,
+          "total": 420
+        }
+      ],
+      "total": 460,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0741179808",
+      "paymentStatus": "Paid",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/7/2026, 1:48:21 PM",
+      "notes": []
+    },
+    {
+      "id": 1770461196966,
+      "orderNumber": "TUC-1021",
+      "timestamp": "2/7/2026, 1:46:36 PM",
+      "items": [
+        {
+          "id": 11,
+          "name": "Juice",
+          "quantity": 1,
+          "price": 40,
+          "total": 40
+        }
+      ],
+      "total": 40,
+      "paymentMethod": "cash",
+      "paymentStatus": "Confirmed",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/7/2026, 1:46:36 PM",
+      "notes": []
+    },
+    {
+      "id": 1770461180213,
+      "orderNumber": "TUC-1020",
+      "timestamp": "2/7/2026, 1:46:20 PM",
+      "items": [
+        {
+          "id": 3,
+          "name": "Tea",
+          "quantity": 1,
+          "price": 15,
+          "total": 15
+        }
+      ],
+      "total": 15,
+      "paymentMethod": "cash",
+      "paymentStatus": "Confirmed",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/7/2026, 1:46:20 PM",
+      "notes": []
+    },
+    {
+      "id": 1770461114241,
+      "orderNumber": "TUC-1019",
+      "timestamp": "2/7/2026, 1:45:14 PM",
+      "items": [
+        {
+          "id": 2,
+          "name": "Chapati",
+          "quantity": 1,
+          "price": 30
+        }
+      ],
+      "total": 30,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0123456789",
+      "paymentStatus": "Paid",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/7/2026, 1:45:14 PM",
+      "notes": []
+    },
+    {
+      "id": 1770461094750,
+      "orderNumber": "TUC-1018",
+      "timestamp": "2/7/2026, 1:44:54 PM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 2,
+          "price": 20
+        }
+      ],
+      "total": 40,
+      "paymentMethod": "cash",
+      "paymentStatus": "Confirmed",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "2/7/2026, 1:44:54 PM",
+      "notes": []
+    },
     {
       "id": 1765448789680,
       "orderNumber": "TUC-1016",
@@ -603,7 +960,7 @@
       "paymentStatus": "Paid"
     }
   ],
-  "orderCounter": 1017,
+  "orderCounter": 1041,
   "reviews": {},
   "adminAccounts": [
     {
