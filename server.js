@@ -7,13 +7,6 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const mpesaModule = require('./modules/mpesa');
 
-<<<<<<< HEAD
-// Import new modules
-const InventoryManager = require('./modules/inventory');
-const AnalyticsManager = require('./modules/analytics');
-const LoyaltyManager = require('./modules/loyalty');
-const RoleManager = require('./modules/roles');
-=======
 require('dotenv').config();
 
 // Import SQLite database connection and models
@@ -33,7 +26,6 @@ const recommendationsModule = require('./modules/recommendations');
 const userProfileModule = require('./modules/userProfile');
 const recommendationUIModule = require('./modules/recommendationUI');
 const recommendationAnalyticsModule = require('./modules/recommendationAnalytics');
->>>>>>> f8f8213b5ba510b7bb4bb8290c3d8637abeb125e
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -61,7 +53,8 @@ app.use(helmet({
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,
-    message: 'Too many requests from this IP, please try again later.'
+    message: 'Too many requests from this IP, please try again later.',
+    skip: (req) => req.ip === '::1' || req.ip === '127.0.0.1'
 });
 app.use('/api/', limiter);
 
