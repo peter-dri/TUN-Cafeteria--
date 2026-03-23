@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-card {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success { background: #4CAF50; color: white; }
+        .error { background: #f44336; color: white; }
+        .pending { background: #ff9800; color: white; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Admin Panel Diagnostic Test</h1>
+    
+    <div class="test-card">
+        <h3>1. Server Connection</h3>
+        <p>Status: <span id="serverStatus" class="status pending">Testing...</span></p>
+        <p id="serverMessage"></p>
+    </div>
+
+    <div class="test-card">
+        <h3>2. API Data Endpoint</h3>
+        <p>Status: <span id="dataStatus" class="status pending">Testing...</span></p>
+        <p id="dataMessage"></p>
+    </div>
+
+    <div class="test-card">
+        <h3>3. Admin Login API</h3>
+        <p>Status: <span id="loginStatus" class="status pending">Testing...</span></p>
+        <p id="loginMessage"></p>
+    </div>
+
+    <div class="test-card">
+        <h3>4. CSS Loading</h3>
+        <p>Status: <span id="cssStatus" class="status pending">Testing...</span></p>
+        <p id="cssMessage"></p>
+    </div>
+
+    <div class="test-card">
+        <h3>5. JavaScript Modules</h3>
+        <p>Status: <span id="jsStatus" class="status pending">Testing...</span></p>
+        <p id="jsMessage"></p>
+    </div>
+
+    <div class="test-card">
+        <h3>📋 Recommendations</h3>
+        <ul id="recommendations"></ul>
+    </div>
+
+    <script>
+        const recommendations = [];
+
+        // Test 1: Server Connection
+        fetch('/api/menu')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('serverStatus').textContent = 'OK';
+                document.getElementById('serverStatus').className = 'status success';
+                document.getElementById('serverMessage').textContent = `Server is running. Found ${data.length} menu items.`;
+            })
+            .catch(err => {
+                document.getElementById('serverStatus').textContent = 'FAILED';
+                document.getElementById('serverStatus').className = 'status error';
+                document.getElementById('serverMessage').textContent = 'Error: ' + err.message;
+                recommendations.push('Make sure the server is running on port 3000');
+            });
+
+        // Test 2: API Data Endpoint
+        fetch('/api/data')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('dataStatus').textContent = 'OK';
+                document.getElementById('dataStatus').className = 'status success';
+                const categories = Object.keys(data.foodData || {});
+                document.getElementById('dataMessage').textContent = `Data endpoint working. Categories: ${categories.join(', ')}`;
+            })
+            .catch(err => {
+                document.getElementById('dataStatus').textContent = 'FAILED';
+                document.getElementById('dataStatus').className = 'status error';
+                document.getElementById('dataMessage').textContent = 'Error: ' + err.message;
+                recommendations.push('Check if /api/data endpoint is properly configured in server.js');
+            });
+
+        // Test 3: Admin Login API
+        fetch('/api/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: 'admin', password: 'admin123' })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.token) {
+                    document.getElementById('loginStatus').textContent = 'OK';
+                    document.getElementById('loginStatus').className = 'status success';
+                    document.getElementById('loginMessage').textContent = `Login API working. Admin: ${data.admin.username}`;
+                } else {
+                    throw new Error('No token received');
+                }
+            })
+            .catch(err => {
+                document.getElementById('loginStatus').textContent = 'FAILED';
+                document.getElementById('loginStatus').className = 'status error';
+                document.getElementById('loginMessage').textContent = 'Error: ' + err.message;
+                recommendations.push('Check admin credentials in database');
+            });
+
+        // Test 4: CSS Loading
+        fetch('/styles.css')
+            .then(res => res.text())
+            .then(css => {
+                if (css.includes('.admin-header')) {
+                    document.getElementById('cssStatus').textContent = 'OK';
+                    document.getElementById('cssStatus').className = 'status success';
+                    document.getElementById('cssMessage').textContent = 'CSS file loaded successfully with admin styles';
+                } else {
+                    throw new Error('Admin styles not found in CSS');
+                }
+            })
+            .catch(err => {
+                document.getElementById('cssStatus').textContent = 'FAILED';
+                document.getElementById('cssStatus').className = 'status error';
+                document.getElementById('cssMessage').textContent = 'Error: ' + err.message;
+                recommendations.push('Check if styles.css contains admin panel styles');
+            });
+
+        // Test 5: JavaScript Modules
+        Promise.all([
+            fetch('/modules/auth.js').then(r => r.text()),
+            fetch('/modules/admin.js').then(r => r.text())
+        ])
+            .then(([authJs, adminJs]) => {
+                if (authJs.includes('AuthModule') && adminJs.includes('AdminModule')) {
+                    document.getElementById('jsStatus').textContent = 'OK';
+                    document.getElementById('jsStatus').className = 'status success';
+                    document.getElementById('jsMessage').textContent = 'All JavaScript modules are accessible';
+                } else {
+                    throw new Error('Module structure incorrect');
+                }
+            })
+            .catch(err => {
+                document.getElementById('jsStatus').textContent = 'FAILED';
+                document.getElementById('jsStatus').className = 'status error';
+                document.getElementById('jsMessage').textContent = 'Error: ' + err.message;
+                recommendations.push('Check if modules/auth.js and modules/admin.js exist');
+            });
+
+        // Show recommendations after all tests
+        setTimeout(() => {
+            const recList = document.getElementById('recommendations');
+            if (recommendations.length === 0) {
+                recList.innerHTML = '<li style="color: green;">✅ All tests passed! Admin panel should be working correctly.</li>';
+                recList.innerHTML += '<li>If you still see issues, try:</li>';
+                recList.innerHTML += '<li>1. Clear browser cache (Ctrl+Shift+Delete)</li>';
+                recList.innerHTML += '<li>2. Try incognito/private browsing mode</li>';
+                recList.innerHTML += '<li>3. Check browser console for JavaScript errors (F12)</li>';
+                recList.innerHTML += '<li>4. Make sure you\'re accessing http://localhost:3000/admin.html</li>';
+            } else {
+                recommendations.forEach(rec => {
+                    recList.innerHTML += `<li style="color: red;">❌ ${rec}</li>`;
+                });
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

@@ -4,234 +4,201 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Admin Panel - Tharaka Cafeteria</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Custom Tailwind Config -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#2E3192',
-                        secondary: '#00BCD4',
-                        accent: '#667eea',
-                        dark: '#1a1d5c'
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.5s ease-in-out',
-                        'slide-up': 'slideUp 0.3s ease-out',
-                        'slide-down': 'slideDown 0.3s ease-out',
-                        'bounce-in': 'bounceIn 0.6s ease-out',
-                        'pulse-slow': 'pulse 3s ease-in-out infinite'
-                    }
-                }
-            }
-        }
-    </script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- Modern Login Screen -->
-    <div id="loginScreen" class="min-h-screen bg-gradient-to-br from-primary via-dark to-accent flex items-center justify-center p-4">
-        <div class="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8 w-full max-w-md animate-slide-up">
+    <div id="loginScreen" class="admin-login-screen">
+        <div class="admin-login-card">
             <!-- Logo -->
-            <div class="text-center mb-8">
-                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-white shadow-lg flex items-center justify-center">
-                    <img src="assets/images/logo.png.jpg" alt="Tharaka University Logo" class="w-16 h-16 object-contain">
+            <div class="admin-login-logo-box">
+                <div class="admin-login-logo">
+                    <img src="assets/images/logo.png.jpg" alt="Tharaka University Logo">
                 </div>
-                <h1 class="text-2xl font-bold text-gray-800 mb-1"><img src="assets/svg/plate.svg" alt="Cafeteria" class="inline w-6 h-6 align-middle mr-1"> Tharaka Cafeteria</h1>
-                <h2 class="text-lg text-gray-600 font-medium">Admin Panel</h2>
+                <h1 class="admin-login-title">🍽️ Tharaka Cafeteria</h1>
+                <h2 class="admin-login-subtitle">Admin Panel</h2>
             </div>
             
             <!-- Login Form -->
-            <form id="loginForm" class="space-y-6">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-                        <input type="text" id="username" required autofocus 
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 bg-white/50">
+            <form id="loginForm" class="admin-login-form">
+                <div class="admin-form-group">
+                    <div class="admin-form-field">
+                        <label class="admin-form-label">Username</label>
+                        <input type="text" id="username" required autofocus class="admin-form-input">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                        <input type="password" id="password" required 
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 bg-white/50">
+                    <div class="admin-form-field">
+                        <label class="admin-form-label">Password</label>
+                        <input type="password" id="password" required class="admin-form-input">
                     </div>
                 </div>
                 
-                <div id="loginError" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl"></div>
+                <div id="loginError" class="admin-login-error" style="display: none;"></div>
                 
-                <button type="submit" class="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-dark transition-all duration-200 hover:scale-105 shadow-lg">
+                <button type="submit" class="admin-btn-primary">
                     Login to Dashboard
                 </button>
             </form>
             
-            <div class="text-center mt-6">
-                <a href="index.html" class="text-primary hover:text-dark transition-colors duration-200 font-medium">
-                    ← Back to Main Site
-                </a>
+            <div class="admin-login-back">
+                <a href="index.html">← Back to Main Site</a>
             </div>
         </div>
         
         <!-- Animated Background Elements -->
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full animate-pulse-slow"></div>
-            <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-white/10 rounded-full animate-pulse-slow" style="animation-delay: 1s;"></div>
+        <div class="admin-bg-elements">
+            <div class="admin-bg-circle"></div>
+            <div class="admin-bg-circle"></div>
         </div>
     </div>
 
     <!-- Admin Dashboard -->
-    <div id="dashboard" class="dashboard hidden" style="display: none;">
+    <div id="dashboard" class="dashboard" style="display: none;">
         <!-- Modern Navbar -->
-        <nav class="bg-white shadow-lg border-b-4 border-primary sticky top-0 z-50 backdrop-blur-md bg-white/95">
-            <div class="px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16 lg:h-20">
+        <nav class="admin-navbar">
+            <div class="admin-navbar-inner">
+                <div class="admin-navbar-content">
                     <!-- Logo and Title -->
-                    <div class="flex items-center space-x-4">
-                        <img src="assets/images/logo.png.jpg" alt="Tharaka University Logo" class="h-10 w-auto transition-transform hover:scale-110">
-                        <h1 class="text-xl lg:text-2xl font-bold text-primary flex items-center space-x-2">
-                            <img src="assets/svg/plate.svg" alt="Cafeteria" class="inline w-6 h-6 align-middle">
-                            <span class="hidden sm:inline">Admin Panel</span>
+                    <div class="admin-navbar-brand">
+                        <img src="assets/images/logo.png.jpg" alt="Tharaka University Logo">
+                        <h1 class="admin-navbar-title">
+                            <span>🍽️</span>
+                            <span>Admin Panel</span>
                         </h1>
                     </div>
                     
                     <!-- Controls and Actions -->
-                    <div class="flex items-center space-x-2 lg:space-x-4">
+                    <div class="admin-navbar-controls">
                         <!-- Theme Toggle -->
-                        <button id="themeToggle" class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200 hover:scale-110" title="Toggle Dark Mode">
-                            <svg class="w-5 h-5 inline align-middle" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"></path></svg>
+                        <button id="themeToggle" class="admin-navbar-btn" title="Toggle Dark Mode">
+                            <span>🌙</span>
                         </button>
                         
                         <!-- Language Toggle -->
-                        <button id="langToggle" class="px-3 py-1 bg-primary/10 text-primary rounded-full font-semibold hover:bg-primary hover:text-white transition-all duration-200">
-                            EN
-                        </button>
+                        <button id="langToggle" class="admin-navbar-lang">EN</button>
                         
                         <!-- Admin Info -->
-                        <div class="hidden lg:flex items-center space-x-2">
-                            <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                                <span class="text-white text-sm font-bold">👤</span>
-                            </div>
-                            <span id="adminInfo" class="text-gray-700 font-medium"></span>
+                        <div class="admin-navbar-info" id="adminInfoContainer" style="display: none;">
+                            <span id="adminInfo" class="admin-navbar-info-text"></span>
                         </div>
                         
                         <!-- Action Buttons -->
-                        <div class="flex items-center space-x-2">
-                            <button id="logoutBtn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200 hover:scale-105 shadow-md" data-en="Logout" data-sw="Toka">
-                                <span class="hidden sm:inline">Logout</span>
-                                <span class="sm:hidden">🚪</span>
-                            </button>
-                            <a href="index.html" class="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-secondary/80 transition-all duration-200 hover:scale-105 shadow-md" data-en="View Site" data-sw="Angalia Tovuti">
-                                <span class="hidden sm:inline">View Site</span>
-                                <span class="sm:hidden">🌐</span>
-                            </a>
+                        <div class="admin-navbar-actions">
+                            <button id="logoutBtn" class="admin-btn-logout" data-en="Logout" data-sw="Toka">Logout</button>
+                            <a href="index.html" class="admin-btn-view-site" data-en="View Site" data-sw="Angalia Tovuti">View Site</a>
                         </div>
                     </div>
                 </div>
             </div>
         </nav>
 
-        <div class="flex min-h-screen bg-gray-50">
+        <div>
             <!-- Modern Sidebar -->
-            <aside class="w-64 lg:w-72 bg-white shadow-xl sticky top-20 h-screen overflow-y-auto border-r border-gray-200">
-                <div class="p-6">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-6">Navigation</h2>
-                    <nav class="space-y-2">
-                        <button class="nav-btn group w-full flex items-center px-4 py-3 text-left rounded-xl hover:bg-primary hover:text-white transition-all duration-200 hover:scale-105 hover:shadow-md" data-tab="pos" data-en="🛒 Quick Order" data-sw="🛒 Oda Haraka">
-                            <span class="text-2xl mr-3 group-hover:scale-110 transition-transform">🛒</span>
-                            <span class="font-medium">Quick Order</span>
+            <aside class="admin-sidebar">
+                <div class="admin-sidebar-inner">
+                    <h2 class="admin-sidebar-title">Navigation</h2>
+                    <nav class="admin-sidebar-nav">
+                        <button class="nav-btn admin-nav-btn" data-tab="pos" data-en="🛒 Quick Order" data-sw="🛒 Oda Haraka">
+                            <span class="admin-nav-icon">🛒</span>
+                            <span>Quick Order</span>
                         </button>
                         
-                        <button class="nav-btn group w-full flex items-center px-4 py-3 text-left rounded-xl hover:bg-primary hover:text-white transition-all duration-200 hover:scale-105 hover:shadow-md" data-tab="inventory" data-en="📦 Inventory" data-sw="📦 Hesabu">
-                            <span class="text-2xl mr-3 group-hover:scale-110 transition-transform">📦</span>
-                            <span class="font-medium">Inventory</span>
+                        <button class="nav-btn admin-nav-btn" data-tab="inventory" data-en="📦 Inventory" data-sw="📦 Hesabu">
+                            <span class="admin-nav-icon">📦</span>
+                            <span>Inventory</span>
                         </button>
                         
-                        <button class="nav-btn group w-full flex items-center px-4 py-3 text-left rounded-xl hover:bg-primary hover:text-white transition-all duration-200 hover:scale-105 hover:shadow-md" data-tab="orders" data-en="📋 Orders" data-sw="📋 Maagizo">
-                            <span class="text-2xl mr-3 group-hover:scale-110 transition-transform">📋</span>
-                            <span class="font-medium">Orders</span>
+                        <button class="nav-btn admin-nav-btn" data-tab="orders" data-en="📋 Orders" data-sw="📋 Maagizo">
+                            <span class="admin-nav-icon">📋</span>
+                            <span>Orders</span>
                         </button>
                         
-                        <button class="nav-btn group w-full flex items-center px-4 py-3 text-left rounded-xl hover:bg-primary hover:text-white transition-all duration-200 hover:scale-105 hover:shadow-md" data-tab="add" data-en="➕ Add Food" data-sw="➕ Ongeza Chakula">
-                            <span class="text-2xl mr-3 group-hover:scale-110 transition-transform">➕</span>
-                            <span class="font-medium">Add Food</span>
+                        <button class="nav-btn admin-nav-btn" data-tab="add" data-en="➕ Add Food" data-sw="➕ Ongeza Chakula">
+                            <span class="admin-nav-icon">➕</span>
+                            <span>Add Food</span>
                         </button>
                         
-                        <button class="nav-btn group w-full flex items-center px-4 py-3 text-left rounded-xl hover:bg-primary hover:text-white transition-all duration-200 hover:scale-105 hover:shadow-md" data-tab="analytics" data-en="📊 Analytics" data-sw="📊 Takwimu">
-                            <span class="text-2xl mr-3 group-hover:scale-110 transition-transform">📊</span>
-                            <span class="font-medium">Analytics</span>
+                        <button class="nav-btn admin-nav-btn" data-tab="analytics" data-en="📊 Analytics" data-sw="📊 Takwimu">
+                            <span class="admin-nav-icon">📊</span>
+                            <span>Analytics</span>
                         </button>
                         
-                        <button class="nav-btn group w-full flex items-center px-4 py-3 text-left rounded-xl hover:bg-primary hover:text-white transition-all duration-200 hover:scale-105 hover:shadow-md" data-tab="recommendations" data-en="✨ AI Recommendations" data-sw="✨ Mapendekezo">
-                            <span class="text-2xl mr-3 group-hover:scale-110 transition-transform">✨</span>
-                            <span class="font-medium">AI Recommendations</span>
+                        <button class="nav-btn admin-nav-btn" data-tab="recommendations" data-en="✨ AI Recommendations" data-sw="✨ Mapendekezo">
+                            <span class="admin-nav-icon">✨</span>
+                            <span>AI Recommendations</span>
                         </button>
                         
-                        <button class="nav-btn group w-full flex items-center px-4 py-3 text-left rounded-xl hover:bg-primary hover:text-white transition-all duration-200 hover:scale-105 hover:shadow-md hidden" id="adminsNavBtn" data-tab="admins" data-en="👥 Admins" data-sw="👥 Wasimamizi">
-                            <span class="text-2xl mr-3 group-hover:scale-110 transition-transform">👥</span>
-                            <span class="font-medium">Admins</span>
+                        <button class="nav-btn admin-nav-btn" data-tab="loyalty" data-en="💎 Loyalty Points" data-sw="💎 Pointi za Sadaka">
+                            <span class="admin-nav-icon">💎</span>
+                            <span>Loyalty Points</span>
+                        </button>
+                        
+                        <button class="nav-btn admin-nav-btn" id="rolesNavBtn" data-tab="roles" data-en="🔐 Roles & Access" data-sw="🔐 Majukumu" style="display: none;">
+                            <span class="admin-nav-icon">🔐</span>
+                            <span>Roles & Access</span>
+                        </button>
+                        
+                        <button class="nav-btn admin-nav-btn" id="adminsNavBtn" data-tab="admins" data-en="👥 Admins" data-sw="👥 Wasimamizi" style="display: none;">
+                            <span class="admin-nav-icon">👥</span>
+                            <span>Admins</span>
                         </button>
                     </nav>
                 </div>
             </aside>
 
             <!-- Main Content -->
-            <main class="flex-1 p-6 overflow-y-auto">
+            <main class="admin-main">
                 <!-- POS / Quick Order Tab -->
-                <div id="posTab" class="tab-panel active animate-fade-in">
-                    <div class="mb-8">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Quick Order (Point of Sale)</h2>
-                        <p class="text-gray-600">Create orders for customers who need assistance</p>
+                <div id="posTab" class="admin-tab-panel active">
+                    <div>
+                        <h2 class="admin-section-title">Quick Order (Point of Sale)</h2>
+                        <p class="admin-section-description">Create orders for customers who need assistance</p>
                     </div>
                     
-                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                    <div class="admin-grid">
                         <!-- Menu Items -->
-                        <div class="xl:col-span-2">
-                            <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                                <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                                    <span class="text-2xl mr-2">🍽️</span>
+                        <div>
+                            <div class="admin-card">
+                                <h3 class="admin-card-title">
+                                    <span class="admin-card-icon">🍽️</span>
                                     Menu Items
                                 </h3>
-                                <div id="posMenu" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                                <div id="posMenu" class="admin-menu-grid"></div>
                             </div>
                         </div>
 
                         <!-- Current Order Card -->
-                        <div class="xl:col-span-1">
-                            <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 sticky top-6">
-                                <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                                    <span class="text-2xl mr-2">🛒</span>
+                        <div>
+                            <div class="admin-card admin-sticky-card">
+                                <h3 class="admin-card-title">
+                                    <span class="admin-card-icon">🛒</span>
                                     Current Order
                                 </h3>
                                 
-                                <div id="posCart" class="mb-4 max-h-64 overflow-y-auto space-y-2"></div>
+                                <div id="posCart" class="admin-cart"></div>
                                 
-                                <div class="border-t-2 border-primary pt-4 mt-4">
-                                    <div class="flex justify-between items-center text-xl font-bold mb-4">
-                                        <span class="text-gray-700">Total:</span>
-                                        <span class="text-primary">KSh <span id="posTotal">0</span></span>
+                                <div class="admin-total-section">
+                                    <div class="admin-total-row">
+                                        <span class="admin-total-label">Total:</span>
+                                        <span class="admin-total-amount">KSh <span id="posTotal">0</span></span>
                                     </div>
                                     
-                                    <div class="space-y-4">
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
-                                            <select id="posPaymentMethod" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                                    <div class="admin-flex admin-flex-col admin-gap-2">
+                                        <div class="admin-input-group">
+                                            <label class="admin-form-label">Payment Method</label>
+                                            <select id="posPaymentMethod" class="admin-form-select admin-select">
                                                 <option value="cash">💵 Cash</option>
                                                 <option value="mpesa">📱 M-Pesa</option>
                                             </select>
                                         </div>
 
-                                        <div id="posMpesaSection" class="hidden">
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">Customer Phone</label>
-                                            <input type="tel" id="posMpesaPhone" placeholder="0712345678" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                                        <div id="posMpesaSection" style="display: none;">
+                                            <label class="admin-form-label">Customer Phone</label>
+                                            <input type="tel" id="posMpesaPhone" placeholder="0712345678" class="admin-input">
                                         </div>
 
-                                        <div class="space-y-2">
-                                            <button id="posPlaceOrder" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-dark transition-all duration-200 hover:scale-105 shadow-md">
-                                                Place Order
-                                            </button>
-                                            <button id="posClearOrder" class="w-full bg-gray-500 text-white py-3 rounded-lg font-semibold hover:bg-gray-600 transition-all duration-200 hover:scale-105 shadow-md">
-                                                Clear Order
-                                            </button>
+                                        <div class="admin-flex admin-flex-col admin-gap-1">
+                                            <button id="posPlaceOrder" class="admin-btn-submit">Place Order</button>
+                                            <button id="posClearOrder" class="admin-btn-secondary">Clear Order</button>
                                         </div>
                                     </div>
                                 </div>
@@ -241,89 +208,88 @@
                 </div>
 
                 <!-- Inventory Tab -->
-                <div id="inventoryTab" class="tab-panel hidden animate-fade-in">
-                    <div class="mb-8">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Inventory Management</h2>
-                        <p class="text-gray-600">Manage your food items and stock levels</p>
+                <div id="inventoryTab" class="admin-tab-panel">
+                    <div>
+                        <h2 class="admin-section-title">Inventory Management</h2>
+                        <p class="admin-section-description">Manage your food items and stock levels</p>
                     </div>
                     
-                    <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                                <span class="text-2xl mr-2">📦</span>
-                                Current Inventory
-                            </h3>
-                            <div id="inventoryList" class="space-y-4"></div>
-                        </div>
+                    <div class="admin-card">
+                        <h3 class="admin-card-title">
+                            <span class="admin-card-icon">📦</span>
+                            Current Inventory
+                        </h3>
+                        <div id="inventoryList" class="admin-flex admin-flex-col admin-gap-1"></div>
                     </div>
                 </div>
 
                 <!-- Orders Tab -->
-                <div id="ordersTab" class="tab-panel hidden animate-fade-in">
-                    <div class="mb-8">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Order History & Verification</h2>
-                        <p class="text-gray-600">View and manage all customer orders</p>
+                <div id="ordersTab" class="admin-tab-panel">
+                    <div>
+                        <h2 class="admin-section-title">Order History & Verification</h2>
+                        <p class="admin-section-description">View and manage all customer orders</p>
                     </div>
                     
                     <!-- Order Search Card -->
-                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 mb-6">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                            <span class="text-2xl mr-2">🔍</span>
+                    <div class="admin-card admin-search-card">
+                        <h3 class="admin-card-title">
+                            <span class="admin-card-icon">🔍</span>
                             Search & Verify Order
                         </h3>
-                        <div class="flex flex-col sm:flex-row gap-4 items-end">
-                            <div class="flex-1">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Order Number</label>
-                                <input type="text" id="orderSearchInput" placeholder="e.g., TUC-1000" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                        <div class="admin-search-form">
+                            <div class="admin-input-group">
+                                <label class="admin-form-label">Order Number</label>
+                                <input type="text" id="orderSearchInput" placeholder="e.g., TUC-1000" class="admin-input">
                             </div>
-                            <div class="flex gap-2">
-                                <button id="searchOrderBtn" class="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-dark transition-all duration-200 hover:scale-105 shadow-md">
+                            <div class="admin-search-buttons">
+                                <button id="searchOrderBtn" class="admin-btn-submit">
                                     Search Order
                                 </button>
-                                <button id="clearSearchBtn" class="px-6 py-3 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 transition-all duration-200 hover:scale-105 shadow-md">
+                                <button id="clearSearchBtn" class="admin-btn-secondary">
                                     Show All
                                 </button>
                             </div>
                         </div>
                         
                         <!-- Search Result -->
-                        <div id="orderSearchResult" class="mt-4"></div>
+                        <div id="orderSearchResult"></div>
                     </div>
 
                     <!-- All Orders -->
-                    <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                                <span class="text-2xl mr-2">📋</span>
-                                All Orders
-                            </h3>
-                            <div id="ordersList" class="space-y-4"></div>
-                        </div>
+                    <div class="admin-card">
+                        <h3 class="admin-card-title">
+                            <span class="admin-card-icon">📋</span>
+                            All Orders
+                        </h3>
+                        <div id="ordersList" class="admin-flex admin-flex-col admin-gap-1"></div>
                     </div>
                 </div>
 
                 <!-- Add Food Tab -->
-                <div id="addTab" class="tab-panel">
-                    <h2>Add New Food Item</h2>
-                    <form id="addFoodForm" class="add-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Food Name</label>
-                                <input type="text" id="foodName" required>
+                <div id="addTab" class="admin-tab-panel">
+                    <div>
+                        <h2 class="admin-section-title">Add New Food Item</h2>
+                        <p class="admin-section-description">Add new items to your menu</p>
+                    </div>
+                    <form id="addFoodForm" class="admin-card admin-form">
+                        <div class="admin-form-row">
+                            <div class="admin-input-group">
+                                <label class="admin-form-label">Food Name</label>
+                                <input type="text" id="foodName" required class="admin-input">
                             </div>
-                            <div class="form-group">
-                                <label>Price (KSh)</label>
-                                <input type="number" id="foodPrice" min="1" required>
+                            <div class="admin-input-group">
+                                <label class="admin-form-label">Price (KSh)</label>
+                                <input type="number" id="foodPrice" min="1" required class="admin-input">
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Quantity</label>
-                                <input type="number" id="foodQuantity" min="0" required>
+                        <div class="admin-form-row">
+                            <div class="admin-input-group">
+                                <label class="admin-form-label">Quantity</label>
+                                <input type="number" id="foodQuantity" min="0" required class="admin-input">
                             </div>
-                            <div class="form-group">
-                                <label>Unit</label>
-                                <select id="foodUnit" required>
+                            <div class="admin-input-group">
+                                <label class="admin-form-label">Unit</label>
+                                <select id="foodUnit" required class="admin-form-select">
                                     <option value="plates">Plates</option>
                                     <option value="cups">Cups</option>
                                     <option value="pieces">Pieces</option>
@@ -331,137 +297,196 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label>Categories</label>
-                            <div class="checkbox-group">
-                                <label><input type="checkbox" name="category" value="breakfast"> Breakfast</label>
-                                <label><input type="checkbox" name="category" value="lunch"> Lunch</label>
-                                <label><input type="checkbox" name="category" value="snacks"> Snacks</label>
+                        <div class="admin-input-group">
+                            <label class="admin-form-label">Categories</label>
+                            <div class="admin-checkbox-group">
+                                <label class="admin-checkbox-label">
+                                    <input type="checkbox" name="category" value="breakfast">
+                                    <span>Breakfast</span>
+                                </label>
+                                <label class="admin-checkbox-label">
+                                    <input type="checkbox" name="category" value="lunch">
+                                    <span>Lunch</span>
+                                </label>
+                                <label class="admin-checkbox-label">
+                                    <input type="checkbox" name="category" value="snacks">
+                                    <span>Snacks</span>
+                                </label>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Add Food Item</button>
+                        <button type="submit" class="admin-btn-submit">Add Food Item</button>
                     </form>
                 </div>
 
                 <!-- Analytics Tab -->
-                <div id="analyticsTab" class="tab-panel">
-                    <h2>Sales Analytics</h2>
+                <div id="analyticsTab" class="admin-tab-panel">
+                    <div>
+                        <h2 class="admin-section-title">Sales Analytics</h2>
+                        <p class="admin-section-description">Track your sales and performance</p>
+                    </div>
                     <div id="analyticsContent"></div>
                 </div>
 
                 <!-- AI Recommendations Analytics Tab -->
-                <div id="recommendationsTab" class="tab-panel">
-                    <h2>✨ AI Recommendation Analytics</h2>
-                    <p style="color: #718096; margin-bottom: 2rem;">Track the effectiveness of personalized recommendations</p>
+                <div id="recommendationsTab" class="admin-tab-panel">
+                    <div>
+                        <h2 class="admin-section-title">✨ AI Recommendation Analytics</h2>
+                        <p class="admin-section-description">Track the effectiveness of personalized recommendations</p>
+                    </div>
                     
                     <!-- Key Metrics -->
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">👁️</div>
-                            <div class="stat-value" id="recTotalShown">0</div>
-                            <div class="stat-label">Recommendations Shown</div>
+                    <div class="admin-stats-grid">
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon">👁️</div>
+                            <div class="admin-stat-value" id="recTotalShown">0</div>
+                            <div class="admin-stat-label">Recommendations Shown</div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">👆</div>
-                            <div class="stat-value" id="recTotalClicked">0</div>
-                            <div class="stat-label">Clicks</div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon">👆</div>
+                            <div class="admin-stat-value" id="recTotalClicked">0</div>
+                            <div class="admin-stat-label">Clicks</div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">🛒</div>
-                            <div class="stat-value" id="recTotalOrdered">0</div>
-                            <div class="stat-label">Orders from Recommendations</div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon">🛒</div>
+                            <div class="admin-stat-value" id="recTotalOrdered">0</div>
+                            <div class="admin-stat-label">Orders from Recommendations</div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">📈</div>
-                            <div class="stat-value" id="recCTR">0%</div>
-                            <div class="stat-label">Click-Through Rate</div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon">📈</div>
+                            <div class="admin-stat-value" id="recCTR">0%</div>
+                            <div class="admin-stat-label">Click-Through Rate</div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">💰</div>
-                            <div class="stat-value" id="recConversionRate">0%</div>
-                            <div class="stat-label">Conversion Rate</div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon">💰</div>
+                            <div class="admin-stat-value" id="recConversionRate">0%</div>
+                            <div class="admin-stat-label">Conversion Rate</div>
                         </div>
                     </div>
 
                     <!-- Strategy Effectiveness -->
-                    <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-                        <h3 style="margin-bottom: 1rem;">Strategy Effectiveness</h3>
+                    <div class="admin-card">
+                        <h3 class="admin-card-subtitle">Strategy Effectiveness</h3>
                         <div id="strategyEffectiveness"></div>
                     </div>
 
                     <!-- Top Recommended Items -->
-                    <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-                        <h3 style="margin-bottom: 1rem;">Top Recommended Items</h3>
+                    <div class="admin-card">
+                        <h3 class="admin-card-subtitle">Top Recommended Items</h3>
                         <div id="topRecommendedItems"></div>
                     </div>
 
                     <!-- Preference Distribution -->
-                    <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                        <h3 style="margin-bottom: 1rem;">User Preference Distribution</h3>
+                    <div class="admin-card">
+                        <h3 class="admin-card-subtitle">User Preference Distribution</h3>
                         <div id="preferenceDistribution"></div>
                     </div>
                 </div>
 
                 <!-- Admins Tab (Super Admin Only) -->
-                <div id="adminsTab" class="tab-panel">
-                    <h2>Admin Management</h2>
+                <div id="adminsTab" class="admin-tab-panel">
+                    <div>
+                        <h2 class="admin-section-title">Admin Management</h2>
+                        <p class="admin-section-description">Manage admin users and roles</p>
+                    </div>
                     
                     <!-- Add Admin Form -->
-                    <div class="add-form" style="margin-bottom: 2rem;">
-                        <h3 style="margin-bottom: 1rem;">Add New Admin</h3>
+                    <div class="admin-card admin-form">
+                        <h3 class="admin-card-title">Add New Admin</h3>
                         <form id="addAdminForm">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Username</label>
-                                    <input type="text" id="adminUsername" required>
+                            <div class="admin-form-row">
+                                <div class="admin-input-group">
+                                    <label class="admin-form-label">Username</label>
+                                    <input type="text" id="adminUsername" required class="admin-input">
                                 </div>
-                                <div class="form-group">
-                                    <label>Password</label>
-                                    <input type="password" id="adminPassword" required>
+                                <div class="admin-input-group">
+                                    <label class="admin-form-label">Password</label>
+                                    <input type="password" id="adminPassword" required class="admin-input">
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label>Role</label>
-                                <select id="adminRole" required>
+                            <div class="admin-input-group">
+                                <label class="admin-form-label">Role</label>
+                                <select id="adminRole" required class="admin-form-select">
                                     <option value="Staff">Staff</option>
                                     <option value="Manager">Manager</option>
                                     <option value="Super Admin">Super Admin</option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary">Add Admin</button>
+                            <button type="submit" class="admin-btn-submit">Add Admin</button>
                         </form>
                     </div>
 
                     <!-- Admins List -->
-                    <h3 style="margin-bottom: 1rem;">Current Admins</h3>
-                    <div id="adminsList"></div>
+                    <div class="admin-card">
+                        <h3 class="admin-card-subtitle">Current Admins</h3>
+                        <div id="adminsList"></div>
+                    </div>
+
+                    <!-- Loyalty Points Management Tab -->
+                    <div id="loyaltyTab" style="display: none;">
+                        <div class="admin-card">
+                            <h3 class="admin-card-title">
+                                <span class="admin-card-icon">💎</span>
+                                Loyalty Points Management
+                            </h3>
+                            
+                            <div style="margin-bottom: 1.5rem;">
+                                <label class="admin-form-label">Search Customer</label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="tel" id="loyaltyPhone" placeholder="Phone (0712345678)" class="admin-input" style="flex: 1;">
+                                    <button onclick="searchLoyaltyCustomer()" class="admin-btn-submit">Search</button>
+                                </div>
+                            </div>
+
+                            <div id="loyaltyResult"></div>
+                        </div>
+
+                        <div class="admin-card">
+                            <h3 class="admin-card-subtitle">Top Customers</h3>
+                            <div id="topCustomersList"></div>
+                        </div>
+                    </div>
+
+                    <!-- Roles & Access Tab -->
+                    <div id="rolesTab" style="display: none;">
+                        <div class="admin-card">
+                            <h3 class="admin-card-title">
+                                <span class="admin-card-icon">🔐</span>
+                                Role Management
+                            </h3>
+                            
+                            <div id="rolesList"></div>
+                        </div>
+
+                        <div class="admin-card">
+                            <h3 class="admin-card-subtitle">Activity Log</h3>
+                            <div id="activityLog"></div>
+                        </div>
+                    </div>
                 </div>
             </main>
         </div>
     </div>
 
     <!-- Modern Loading Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-8 shadow-2xl animate-bounce-in">
-            <div class="flex flex-col items-center space-y-4">
-                <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                <p class="text-gray-700 font-medium">Loading...</p>
+    <div id="loadingOverlay" class="admin-loading-overlay">
+        <div class="admin-loading-container">
+            <div class="admin-loading-content">
+                <div class="admin-spinner"></div>
+                <p class="admin-loading-text">Loading...</p>
             </div>
         </div>
     </div>
 
     <!-- Modern Success Modal -->
-    <div id="successModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-8 shadow-2xl max-w-md mx-4 animate-slide-up">
-            <div class="text-center">
-                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
+    <div id="successModal" class="admin-modal">
+        <div class="admin-modal-content">
+            <div class="admin-modal-center">
+                <div class="admin-success-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#38A169" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
                 </div>
-                <h3 id="successTitle" class="text-xl font-bold text-gray-800 mb-2">Success!</h3>
-                <p id="successMessage" class="text-gray-600 mb-6"></p>
-                <button onclick="closeSuccessModal()" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-dark transition-all duration-200">
+                <h3 id="successTitle" class="admin-modal-title">Success!</h3>
+                <p id="successMessage" class="admin-modal-message"></p>
+                <button id="closeSuccessBtn" class="admin-btn-submit">
                     Close
                 </button>
             </div>
@@ -469,13 +494,31 @@
     </div>
 
     <!-- Toast Notification Container -->
-    <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+    <div id="toastContainer" class="admin-toast-container"></div>
 
     <script src="modules/auth.js"></script>
     <script src="modules/userProfile.js"></script>
     <script src="modules/recommendationAnalytics.js"></script>
+    <script src="modules/confirm.js"></script>
     <script src="modules/admin.js"></script>
     <script>
+        // Show notification toast
+        function showNotification(message) {
+            const toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) return;
+            
+            const toast = document.createElement('div');
+            toast.className = 'admin-toast';
+            toast.textContent = message;
+            toast.style.cssText = 'background: #48BB78; color: white; padding: 1rem; border-radius: 0.5rem; margin-bottom: 0.5rem; animation: slideIn 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
         // Initialize
         AuthModule.init();
 
@@ -485,133 +528,205 @@
         }
 
         // Modern Login form with loading states
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('loginError');
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            
-            // Show loading state
-            submitBtn.innerHTML = '<div class="spinner-modern mx-auto"></div>';
-            submitBtn.disabled = true;
-            errorDiv.classList.add('hidden');
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const errorDiv = document.getElementById('loginError');
+                const submitBtn = e.target.querySelector('button[type="submit"]');
 
-            try {
-                await AuthModule.login(username, password);
-                // Clear the form fields after successful login
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-                showToast('Login successful! Welcome to the admin panel.', 'success');
-                showDashboard();
-            } catch (error) {
-                errorDiv.textContent = error.message;
-                errorDiv.classList.remove('hidden');
-                // Clear password field on error for security
-                document.getElementById('password').value = '';
-                showToast('Login failed. Please check your credentials.', 'error');
-            } finally {
-                // Reset button state
-                submitBtn.innerHTML = 'Login to Dashboard';
-                submitBtn.disabled = false;
-            }
-        });
+                // Show loading state
+                if (submitBtn) {
+                    submitBtn.textContent = 'Loading...';
+                    submitBtn.disabled = true;
+                }
+                if (errorDiv) errorDiv.style.display = 'none';
+
+                try {
+                    await AuthModule.login(username, password);
+                    // Clear the form fields after successful login
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                    showToast('Login successful! Welcome to the admin panel.', 'success');
+                    showDashboard();
+                } catch (error) {
+                    if (errorDiv) {
+                        errorDiv.textContent = error.message;
+                        errorDiv.style.display = 'block';
+                    }
+                    document.getElementById('password').value = '';
+                    showToast('Login failed. Please check your credentials.', 'error');
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.textContent = 'Login to Dashboard';
+                        submitBtn.disabled = false;
+                    }
+                }
+            });
+        }
 
         // Logout
-        document.getElementById('logoutBtn').addEventListener('click', () => {
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) logoutBtn.addEventListener('click', () => {
             AuthModule.logout();
-            location.reload();
+            window.location.href = 'index.html';
         });
 
         // Modern Toast Notification System
         function showToast(message, type = 'success') {
             const toast = document.createElement('div');
-            const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
-            
-            toast.className = `${bgColor} text-white px-6 py-4 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 flex items-center space-x-3`;
-            toast.innerHTML = `
-                <span class="text-xl">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
-                <span class="font-medium">${message}</span>
-                <button onclick="this.parentElement.remove()" class="ml-4 text-white/80 hover:text-white">✕</button>
-            `;
-            
-            document.getElementById('toastContainer').appendChild(toast);
-            
-            // Animate in
-            setTimeout(() => toast.classList.remove('translate-x-full'), 100);
-            
-            // Auto remove after 5 seconds
+            const bgColor = type === 'success' ? '#48BB78' : type === 'error' ? '#EF4444' : '#3182CE';
+            toast.style.background = bgColor;
+            toast.style.color = 'white';
+            toast.style.padding = '0.5rem 1rem';
+            toast.style.borderRadius = '0.5rem';
+            toast.style.boxShadow = '0 8px 20px rgba(0,0,0,0.08)';
+            toast.style.display = 'flex';
+            toast.style.alignItems = 'center';
+            toast.style.gap = '0.75rem';
+            toast.style.minWidth = '220px';
+            toast.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+
+            const icon = document.createElement('span');
+            icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+            icon.style.fontSize = '1rem';
+
+            const text = document.createElement('span');
+            text.style.fontWeight = '600';
+            text.style.fontSize = '0.875rem';
+            text.textContent = message;
+
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '×';
+            closeBtn.style.marginLeft = 'auto';
+            closeBtn.style.background = 'transparent';
+            closeBtn.style.border = 'none';
+            closeBtn.style.color = 'rgba(255,255,255,0.9)';
+            closeBtn.style.cursor = 'pointer';
+            closeBtn.addEventListener('click', () => toast.remove());
+
+            toast.appendChild(icon);
+            toast.appendChild(text);
+            toast.appendChild(closeBtn);
+
+            const container = document.getElementById('toastContainer');
+            if (container) container.appendChild(toast);
+
+            // Auto remove after 4 seconds
             setTimeout(() => {
-                toast.classList.add('translate-x-full');
-                setTimeout(() => toast.remove(), 300);
-            }, 5000);
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 350);
+            }, 4000);
         }
 
-        // Modern Modal Functions
+        // Modern Modal Functions (use inline styles)
         function showSuccessModal(title, message) {
+            const modal = document.getElementById('successModal');
+            if (!modal) return;
             document.getElementById('successTitle').textContent = title;
             document.getElementById('successMessage').textContent = message;
-            document.getElementById('successModal').classList.remove('hidden');
+            modal.style.display = 'flex';
         }
 
         function closeSuccessModal() {
-            document.getElementById('successModal').classList.add('hidden');
+            const modal = document.getElementById('successModal');
+            if (!modal) return;
+            modal.style.display = 'none';
         }
 
+        // Attach close button listener (CSP-safe)
+        document.getElementById('closeSuccessBtn').addEventListener('click', closeSuccessModal);
+
         function showLoading() {
-            document.getElementById('loadingOverlay').classList.remove('hidden');
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) overlay.style.display = 'flex';
         }
 
         function hideLoading() {
-            document.getElementById('loadingOverlay').classList.add('hidden');
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) overlay.style.display = 'none';
         }
 
-        // Tab navigation with modern animations
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                // Remove active states
-                document.querySelectorAll('.nav-btn').forEach(b => {
-                    b.classList.remove('bg-primary', 'text-white', 'shadow-lg');
-                    b.classList.add('text-gray-700');
-                });
-                document.querySelectorAll('.tab-panel').forEach(t => {
-                    t.classList.add('hidden');
-                    t.classList.remove('active');
-                });
-                
-                // Add active state to clicked button
-                e.target.classList.add('bg-primary', 'text-white', 'shadow-lg');
-                e.target.classList.remove('text-gray-700');
-                
-                const tab = e.target.dataset.tab;
-                const tabPanel = document.getElementById(tab + 'Tab');
-                tabPanel.classList.remove('hidden');
-                tabPanel.classList.add('active');
+        // Tab activation helpers: show only the selected tab panel and mark nav
+        const getPanels = () => Array.from(document.querySelectorAll('main > div[id$="Tab"]'));
 
-                // Render content
-                if (tab === 'pos') {
-                    AdminModule.renderPOSMenu('posMenu');
-                    AdminModule.renderPOSCart();
-                }
-                if (tab === 'inventory') AdminModule.renderInventory('inventoryList');
-                if (tab === 'orders') AdminModule.renderOrders('ordersList');
-                if (tab === 'analytics') AdminModule.renderAnalytics('analyticsContent');
-                if (tab === 'recommendations') renderRecommendationAnalytics();
-                if (tab === 'admins') AdminModule.renderAdmins('adminsList');
+        function resetNavStyles() {
+            document.querySelectorAll('.nav-btn').forEach(b => {
+                b.style.background = 'transparent';
+                b.style.color = '#4A5568';
+                b.style.borderLeft = 'none';
+            });
+        }
+
+        function hideAllPanels() {
+            getPanels().forEach(p => {
+                p.style.display = 'none';
+                p.classList.remove('active');
+            });
+        }
+
+        function activateTab(tab) {
+            if (!tab) return;
+            resetNavStyles();
+            hideAllPanels();
+
+            // mark nav button
+            const btn = Array.from(document.querySelectorAll('.nav-btn')).find(b => b.dataset.tab === tab);
+            if (btn) {
+                btn.style.background = '#EDF2FF';
+                btn.style.color = '#2E3192';
+                btn.style.borderLeft = '4px solid #2E3192';
+            }
+
+            // show panel
+            const panel = document.getElementById(tab + 'Tab');
+            if (panel) {
+                panel.style.display = 'block';
+                panel.classList.add('active');
+            }
+
+            // render/refresh content for known panels
+            if (tab === 'pos') {
+                AdminModule.renderPOSMenu('posMenu');
+                AdminModule.renderPOSCart();
+            } else if (tab === 'inventory') {
+                AdminModule.renderInventory('inventoryList');
+            } else if (tab === 'orders') {
+                AdminModule.renderOrders('ordersList');
+            } else if (tab === 'analytics') {
+                AdminModule.renderAnalytics('analyticsContent');
+            } else if (tab === 'recommendations') {
+                renderRecommendationAnalytics();
+            } else if (tab === 'admins') {
+                AdminModule.renderAdmins('adminsList');
+            }
+
+            // remember last active
+            try { localStorage.setItem('lastAdminTab', tab); } catch (e) {}
+        }
+
+        // attach click handlers
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                activateTab(tab);
             });
         });
 
         // Render Recommendation Analytics
         function renderRecommendationAnalytics() {
             const summary = RecommendationAnalytics.getAnalyticsSummary();
-            
+
             // Update key metrics
             document.getElementById('recTotalShown').textContent = summary.totalRecommendationsShown;
             document.getElementById('recTotalClicked').textContent = summary.totalClicks;
             document.getElementById('recTotalOrdered').textContent = summary.totalOrders;
             document.getElementById('recCTR').textContent = summary.clickThroughRate.toFixed(1) + '%';
             document.getElementById('recConversionRate').textContent = summary.conversionRate.toFixed(1) + '%';
-            
+
             // Strategy effectiveness
             const strategyHTML = Object.entries(summary.strategyEffectiveness).map(([strategy, stats]) => `
                 <div style="padding: 1rem; background: #F7FAFC; border-radius: 0.375rem; margin-bottom: 1rem;">
@@ -621,6 +736,20 @@
                             <div style="color: #718096;">Shown</div>
                             <div style="font-weight: 600;">${stats.shown}</div>
                         </div>
+
+            <!-- Confirmation Modal -->
+            <div id="confirmModal" class="admin-modal" style="display: none;">
+                <div class="admin-modal-content">
+                    <div class="admin-modal-center">
+                        <h3 id="confirmTitle" class="admin-modal-title">Please confirm</h3>
+                        <p id="confirmMessage" class="admin-modal-message"></p>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <button id="confirmYes" class="admin-btn-submit">Confirm</button>
+                            <button id="confirmNo" class="admin-btn-secondary">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
                         <div>
                             <div style="color: #718096;">CTR</div>
                             <div style="font-weight: 600; color: #2E3192;">${stats.ctr.toFixed(1)}%</div>
@@ -633,7 +762,7 @@
                 </div>
             `).join('');
             document.getElementById('strategyEffectiveness').innerHTML = strategyHTML || '<p style="color: #718096;">No data yet</p>';
-            
+
             // Top recommended items
             const topItemsHTML = summary.topItems.length > 0 ? `
                 <table style="width: 100%; border-collapse: collapse;">
@@ -660,7 +789,7 @@
                 </table>
             ` : '<p style="color: #718096;">No data yet</p>';
             document.getElementById('topRecommendedItems').innerHTML = topItemsHTML;
-            
+
             // Preference distribution
             const prefs = RecommendationAnalytics.getPreferenceDistribution();
             const prefHTML = Object.entries(prefs).map(([pref, count]) => `
@@ -678,54 +807,71 @@
         }
 
         // Modern Add food form with loading and toast notifications
-        document.getElementById('addFoodForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const name = document.getElementById('foodName').value;
-            const price = parseInt(document.getElementById('foodPrice').value);
-            const quantity = parseInt(document.getElementById('foodQuantity').value);
-            const unit = document.getElementById('foodUnit').value;
-            const categories = Array.from(document.querySelectorAll('input[name="category"]:checked'))
-                .map(cb => cb.value);
+        const addFoodForm = document.getElementById('addFoodForm');
+        if (addFoodForm) {
+            addFoodForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
 
-            if (categories.length === 0) {
-                showToast('Please select at least one category', 'error');
-                return;
-            }
+                const name = document.getElementById('foodName').value;
+                const price = parseInt(document.getElementById('foodPrice').value);
+                const quantity = parseInt(document.getElementById('foodQuantity').value);
+                const unit = document.getElementById('foodUnit').value;
+                const categories = Array.from(document.querySelectorAll('input[name="category"]:checked'))
+                    .map(cb => cb.value);
 
-            showLoading();
-            try {
-                await AdminModule.addFood(name, price, quantity, unit, categories);
-                e.target.reset();
-                showToast(`${name} added successfully to inventory!`, 'success');
-                AdminModule.renderInventory('inventoryList');
-            } catch (error) {
-                showToast('Failed to add food item. Please try again.', 'error');
-            } finally {
-                hideLoading();
-            }
-        });
+                if (categories.length === 0) {
+                    showToast('Please select at least one category', 'error');
+                    return;
+                }
+
+                showLoading();
+                try {
+                    console.log('Adding food:', { name, price, quantity, unit, categories });
+                    await AdminModule.addFood(name, price, quantity, unit, categories);
+                    e.target.reset();
+                    showToast(`${name} added successfully to inventory!`, 'success');
+                    
+                    // Reload data from server to get the latest
+                    await AdminModule.loadData();
+                    
+                    // Refresh all relevant displays
+                    AdminModule.renderInventory('inventoryList');
+                    AdminModule.renderPOSMenu('posMenu');
+                    
+                } catch (error) {
+                    console.error('Error adding food:', error);
+                    showToast(`Failed to add food item: ${error.message}`, 'error');
+                    showToast('Failed to add food item. Please try again.', 'error');
+                } finally {
+                    hideLoading();
+                }
+            });
+        }
 
         // Add admin form
-        document.getElementById('addAdminForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const username = document.getElementById('adminUsername').value;
-            const password = document.getElementById('adminPassword').value;
-            const role = document.getElementById('adminRole').value;
+        const addAdminForm = document.getElementById('addAdminForm');
+        if (addAdminForm) {
+            addAdminForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
 
-            try {
-                await AdminModule.addAdmin(username, password, role);
-                e.target.reset();
-                alert('Admin added successfully!');
-                AdminModule.renderAdmins('adminsList');
-            } catch (error) {
-                alert('Error: ' + error.message);
-            }
-        });
+                const username = document.getElementById('adminUsername').value;
+                const password = document.getElementById('adminPassword').value;
+                const role = document.getElementById('adminRole').value;
+
+                try {
+                    await AdminModule.addAdmin(username, password, role);
+                    e.target.reset();
+                    alert('Admin added successfully!');
+                    AdminModule.renderAdmins('adminsList');
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            });
+        }
 
         // POS Payment method change
-        document.getElementById('posPaymentMethod').addEventListener('change', (e) => {
+        const posPaymentMethod = document.getElementById('posPaymentMethod');
+        if (posPaymentMethod) posPaymentMethod.addEventListener('change', (e) => {
             const mpesaSection = document.getElementById('posMpesaSection');
             if (e.target.value === 'mpesa') {
                 mpesaSection.style.display = 'block';
@@ -735,13 +881,14 @@
         });
 
         // Modern POS Place Order with loading states
-        document.getElementById('posPlaceOrder').addEventListener('click', async () => {
+        const posPlaceBtn = document.getElementById('posPlaceOrder');
+        if (posPlaceBtn) posPlaceBtn.addEventListener('click', async () => {
             const btn = document.getElementById('posPlaceOrder');
             const originalText = btn.textContent;
-            
-            btn.innerHTML = '<div class="spinner-modern mx-auto"></div>';
+
+            btn.textContent = 'Loading...';
             btn.disabled = true;
-            
+
             try {
                 await AdminModule.placePOSOrder();
                 showToast('Order placed successfully!', 'success');
@@ -754,21 +901,24 @@
         });
 
         // Modern POS Clear Order with confirmation
-        document.getElementById('posClearOrder').addEventListener('click', () => {
-            if (confirm('Are you sure you want to clear the current order?')) {
-                AdminModule.clearPOSOrder();
+        const posClearBtn = document.getElementById('posClearOrder');
+        if (posClearBtn) posClearBtn.addEventListener('click', async () => {
+            if (await Confirm.confirm('Are you sure you want to clear the current order?')) {
+                await AdminModule.clearPOSOrder();
                 showToast('Order cleared', 'info');
             }
         });
 
         // Order Search
-        document.getElementById('searchOrderBtn').addEventListener('click', () => {
+        const searchOrderBtn = document.getElementById('searchOrderBtn');
+        if (searchOrderBtn) searchOrderBtn.addEventListener('click', () => {
             const orderNumber = document.getElementById('orderSearchInput').value;
             AdminModule.searchOrder(orderNumber);
         });
 
         // Order Search - Enter key
-        document.getElementById('orderSearchInput').addEventListener('keypress', (e) => {
+        const orderSearchInput = document.getElementById('orderSearchInput');
+        if (orderSearchInput) orderSearchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const orderNumber = document.getElementById('orderSearchInput').value;
                 AdminModule.searchOrder(orderNumber);
@@ -776,68 +926,110 @@
         });
 
         // Clear Search
-        document.getElementById('clearSearchBtn').addEventListener('click', () => {
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        if (clearSearchBtn) clearSearchBtn.addEventListener('click', () => {
             AdminModule.clearOrderSearch();
         });
 
         // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', currentTheme);
-        themeToggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+        if (themeToggle) {
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            themeToggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
 
-        themeToggle.addEventListener('click', () => {
-            const theme = document.documentElement.getAttribute('data-theme');
-            const newTheme = theme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-        });
+            themeToggle.addEventListener('click', () => {
+                const theme = document.documentElement.getAttribute('data-theme');
+                const newTheme = theme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            });
+        }
 
         // Language Toggle
         const langToggle = document.getElementById('langToggle');
         let currentLang = localStorage.getItem('language') || 'en';
-        
+
         function switchLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('language', lang);
-            langToggle.textContent = lang === 'en' ? 'EN' : 'SW';
-            
+            if (langToggle) langToggle.textContent = lang === 'en' ? 'EN' : 'SW';
+
             document.querySelectorAll('[data-en][data-sw]').forEach(el => {
                 const text = el.getAttribute('data-' + lang);
-                if (text) {
-                    if (el.tagName === 'INPUT' || el.tagName === 'BUTTON') {
-                        el.textContent = text;
-                    } else {
-                        el.textContent = text;
-                    }
-                }
+                if (text) el.textContent = text;
             });
         }
 
-        langToggle.addEventListener('click', () => {
-            switchLanguage(currentLang === 'en' ? 'sw' : 'en');
-        });
+        if (langToggle) {
+            langToggle.addEventListener('click', () => {
+                switchLanguage(currentLang === 'en' ? 'sw' : 'en');
+            });
+        }
 
         switchLanguage(currentLang);
 
+        // Loyalty Search Function
+        function searchLoyaltyCustomer() {
+            const phone = document.getElementById('loyaltyPhone').value.trim();
+            if (!phone) {
+                alert('Please enter a phone number');
+                return;
+            }
+
+            fetch(`/api/loyalty/${phone}`)
+                .then(res => res.json())
+                .then(data => {
+                    const result = document.getElementById('loyaltyResult');
+                    if (data.success) {
+                        const loyalty = data.loyalty;
+                        const html = `
+                            <div class="admin-card" style="background: #F0FFF4; border-left: 4px solid #48BB78;">
+                                <h4 style="color: #22543D; margin-top: 0;">💎 ${loyalty.phone}</h4>
+                                <table style="width: 100%; font-size: 0.875rem;">
+                                    <tr><td><strong>Total Points:</strong></td><td>${loyalty.points}</td></tr>
+                                    <tr><td><strong>Tier:</strong></td><td>${loyalty.tier.tier}</td></tr>
+                                    <tr><td><strong>Total Spent:</strong></td><td>KSh ${loyalty.totalSpent}</td></tr>
+                                    <tr><td><strong>Order Count:</strong></td><td>${loyalty.orders}</td></tr>
+                                    <tr><td><strong>Member Since:</strong></td><td>${loyalty.joinedDate}</td></tr>
+                                    <tr><td><strong>Estimated Discount:</strong></td><td>KSh ${loyalty.estimatedDiscount}</td></tr>
+                                </table>
+                            </div>
+                        `;
+                        result.innerHTML = html;
+                    } else {
+                        result.innerHTML = `<div style="color: #C53030; padding: 1rem; background: #FED7D7; border-radius: 0.5rem;">No record found for this customer</div>`;
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('loyaltyResult').innerHTML = `<div style="color: red;">Error: ${err.message}</div>`;
+                });
+        }
+
         async function showDashboard() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            
+            const loginScreen = document.getElementById('loginScreen');
+            const dashboard = document.getElementById('dashboard');
+            if (loginScreen) loginScreen.style.display = 'none';
+            if (dashboard) dashboard.style.display = 'block';
+
             const admin = AuthModule.getCurrentAdmin();
-            document.getElementById('adminInfo').textContent = `${admin.username} (${admin.role})`;
+            const adminInfoEl = document.getElementById('adminInfo');
+            if (admin && adminInfoEl) adminInfoEl.textContent = `${admin.username} (${admin.role})`;
 
             // Show Admins tab only for Super Admin
             if (AuthModule.isSuperAdmin()) {
-                document.getElementById('adminsNavBtn').style.display = 'block';
+                const adminsBtn = document.getElementById('adminsNavBtn');
+                const rolesBtn = document.getElementById('rolesNavBtn');
+                if (adminsBtn) adminsBtn.style.display = 'block';
+                if (rolesBtn) rolesBtn.style.display = 'block';
             }
 
             await AdminModule.loadData();
-            AdminModule.renderPOSMenu('posMenu');
-            AdminModule.renderPOSCart();
-            AdminModule.renderInventory('inventoryList');
-            AdminModule.renderOrders('ordersList');
+
+            // Activate last-viewed tab or default to pos
+            const last = localStorage.getItem('lastAdminTab') || 'pos';
+            activateTab(last);
         }
     </script>
 </body>

@@ -53,14 +53,13 @@
                         data-en-placeholder="Search for food..." 
                         data-sw-placeholder="Tafuta chakula..."
                         style="width: 100%; padding: 1rem 1.5rem 1rem 3.5rem; border: 2px solid #2E3192; border-radius: 3rem; font-size: 1rem; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(46, 49, 146, 0.1);"
-                        oninput="applyFilters()"
                     >
                 </div>
 
                 <!-- Filters -->
                 <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
                     <!-- Category Filter -->
-                    <select id="categoryFilter" onchange="applyFilters()" style="padding: 0.75rem 1.25rem; border: 2px solid #2E3192; border-radius: 2rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; background: white; color: #2E3192;">
+                    <select id="categoryFilter" style="padding: 0.75rem 1.25rem; border: 2px solid #2E3192; border-radius: 2rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; background: white; color: #2E3192;">
                         <option value="all" data-en="All Categories" data-sw="Aina Zote">All Categories</option>
                         <option value="breakfast" data-en="Breakfast" data-sw="Kifungua Kinywa">Breakfast</option>
                         <option value="lunch" data-en="Lunch" data-sw="Chakula cha Mchana">Lunch</option>
@@ -68,7 +67,7 @@
                     </select>
 
                     <!-- Price Filter -->
-                    <select id="priceFilter" onchange="applyFilters()" style="padding: 0.75rem 1.25rem; border: 2px solid #2E3192; border-radius: 2rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; background: white; color: #2E3192;">
+                    <select id="priceFilter" style="padding: 0.75rem 1.25rem; border: 2px solid #2E3192; border-radius: 2rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; background: white; color: #2E3192;">
                         <option value="all" data-en="All Prices" data-sw="Bei Zote">All Prices</option>
                         <option value="0-50" data-en="Under KSh 50" data-sw="Chini ya KSh 50">Under KSh 50</option>
                         <option value="50-100" data-en="KSh 50-100" data-sw="KSh 50-100">KSh 50-100</option>
@@ -77,14 +76,14 @@
                     </select>
 
                     <!-- Availability Filter -->
-                    <select id="availabilityFilter" onchange="applyFilters()" style="padding: 0.75rem 1.25rem; border: 2px solid #2E3192; border-radius: 2rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; background: white; color: #2E3192;">
+                    <select id="availabilityFilter" class="filter-select" style="padding: 0.75rem 1.25rem; border: 2px solid #2E3192; border-radius: 2rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; background: white; color: #2E3192;">
                         <option value="all" data-en="All Items" data-sw="Vyote">All Items</option>
                         <option value="available" data-en="In Stock" data-sw="Zinapatikana">In Stock</option>
                         <option value="low" data-en="Low Stock (<10)" data-sw="Pungufu (<10)">Low Stock (&lt;10)</option>
                     </select>
 
                     <!-- Clear Filters -->
-                    <button onclick="clearFilters()" style="padding: 0.75rem 1.25rem; border: 2px solid #718096; border-radius: 2rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; background: white; color: #718096; transition: all 0.3s ease;">
+                    <button id="clearFiltersBtn" style="padding: 0.75rem 1.25rem; border: 2px solid #718096; border-radius: 2rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; background: white; color: #718096; transition: all 0.3s ease;">
                         <span data-en="Clear Filters" data-sw="Futa Chujio">Clear Filters</span>
                     </button>
                 </div>
@@ -101,7 +100,7 @@
 
         <!-- Preferences Button -->
         <div style="text-align: center; margin: 2rem 0;">
-            <button onclick="RecommendationUI.showPreferences()" class="btn btn-secondary">
+            <button id="preferencesBtn" class="btn btn-secondary">
                 ⚙️ <span data-en="Set Food Preferences" data-sw="Weka Mapendeleo">Set Food Preferences</span>
             </button>
         </div>
@@ -127,7 +126,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Your Cart</h3>
-                <button class="close" onclick="closeCart()">&times;</button>
+                <button id="closeCartBtn" class="close">&times;</button>
             </div>
             <div id="cartItems" class="cart-items"></div>
             <div class="cart-footer">
@@ -144,7 +143,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Payment Options</h3>
-                <button class="close" onclick="closePayment()">&times;</button>
+                <button id="closePaymentBtn" class="close">&times;</button>
             </div>
             <div class="cart-items">
                 <div id="paymentSummary" style="margin-bottom: 1rem; padding: 1rem; background: #F7FAFC; border-radius: 0.375rem;"></div>
@@ -189,6 +188,9 @@
         </div>
     </div>
 
+    <!-- Toast Container for Notifications -->
+    <div id="toastContainer" style="position: fixed; bottom: 1rem; right: 1rem; z-index: 1000; display: flex; flex-direction: column; gap: 0.5rem;"></div>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -228,7 +230,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Food Preferences</h3>
-                <button class="close" onclick="RecommendationUI.closePreferences()">&times;</button>
+                <button id="closePreferencesBtn" class="close">&times;</button>
             </div>
             <div id="preferencesContent" class="cart-items">
                 <!-- Preferences content will be dynamically inserted -->
@@ -245,6 +247,23 @@
     <script src="modules/cart.js"></script>
     <script src="modules/payment.js"></script>
     <script>
+        // Show notification toast
+        function showNotification(message) {
+            const toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) return;
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            toast.style.cssText = 'background: #48BB78; color: white; padding: 1rem; border-radius: 0.5rem; margin-bottom: 0.5rem; animation: slideIn 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
         // Initialize app
         let appData = { menu: {}, orders: [] };
 
@@ -302,93 +321,7 @@
             }, 30000); // Refresh every 30 seconds
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadData();
-            CartModule.init();
-            startAutoRefresh();
-        });
-
-        // Manual refresh button
-        document.getElementById('refreshMenuBtn').addEventListener('click', async () => {
-            const btn = document.getElementById('refreshMenuBtn');
-            btn.textContent = '⏳ Refreshing...';
-            btn.disabled = true;
-            
-            await loadData();
-            
-            btn.textContent = '✓ Menu Updated!';
-            setTimeout(() => {
-                btn.textContent = '🔄 Refresh Menu';
-                btn.disabled = false;
-            }, 2000);
-        });
-
-        // Cart button
-        document.getElementById('cartBtn').addEventListener('click', () => {
-            CartModule.show();
-        });
-
-        // Checkout - Show payment modal
-        document.getElementById('checkoutBtn').addEventListener('click', () => {
-            const cart = CartModule.getItems();
-            if (cart.length === 0) {
-                alert('Your cart is empty!');
-                return;
-            }
-
-            PaymentModule.showPaymentModal(cart, CartModule.getTotal());
-            closeCart();
-        });
-
-        // Payment method change
-        document.getElementById('paymentMethod').addEventListener('change', (e) => {
-            const mpesaSection = document.getElementById('mpesaSection');
-            if (e.target.value === 'mpesa') {
-                mpesaSection.style.display = 'block';
-            } else {
-                mpesaSection.style.display = 'none';
-            }
-        });
-
-        // Confirm payment and place order
-        document.getElementById('confirmPaymentBtn').addEventListener('click', async () => {
-            const cart = CartModule.getItems();
-            const total = CartModule.getTotal();
-            const method = document.getElementById('paymentMethod').value;
-            const mpesaPhone = method === 'mpesa' ? document.getElementById('mpesaPhone').value : null;
-
-            // Validate M-Pesa phone if selected
-            if (method === 'mpesa' && (!mpesaPhone || mpesaPhone.trim() === '')) {
-                alert('Please enter your M-Pesa phone number');
-                return;
-            }
-
-            try {
-                showLoading('Processing your order...');
-                const result = await PaymentModule.processPayment(method, cart, total, mpesaPhone);
-                hideLoading();
-                
-                if (result.success) {
-                    showSuccess(`Order #${result.order.orderNumber} placed successfully! Total: KSh ${result.order.total}`);
-                    CartModule.clear();
-                    closePayment();
-                    setTimeout(() => loadData(), 1000); // Reload menu after animation
-                } else {
-                    // Handle insufficient inventory error
-                    if (result.error === 'Insufficient inventory') {
-                        alert(`❌ Order Failed - Insufficient Inventory\n\n${result.details}\n\nPlease refresh the menu and adjust your order.`);
-                        loadData(); // Reload menu to show current inventory
-                    } else {
-                        alert('Error placing order: ' + (result.error || 'Unknown error'));
-                    }
-                }
-            } catch (error) {
-                hideLoading();
-                alert('Error placing order: ' + error.message);
-            }
-        });
-
+        // Helper functions
         function closeCart() {
             document.getElementById('cartModal').style.display = 'none';
         }
@@ -396,53 +329,6 @@
         function closePayment() {
             document.getElementById('paymentModal').style.display = 'none';
         }
-
-        // Theme Toggle
-        const themeToggle = document.getElementById('themeToggle');
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', currentTheme);
-        themeToggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
-
-        themeToggle.addEventListener('click', () => {
-            const theme = document.documentElement.getAttribute('data-theme');
-            const newTheme = theme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-        });
-
-        // Language Toggle
-        const langToggle = document.getElementById('langToggle');
-        let currentLang = localStorage.getItem('language') || 'en';
-        
-        function switchLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('language', lang);
-            langToggle.textContent = lang === 'en' ? 'EN' : 'SW';
-            
-            // Update all elements with data-en and data-sw attributes
-            document.querySelectorAll('[data-en][data-sw]').forEach(el => {
-                const text = el.getAttribute('data-' + lang);
-                if (text) {
-                    if (el.tagName === 'INPUT' || el.tagName === 'BUTTON') {
-                        if (el.hasAttribute('placeholder')) {
-                            el.placeholder = text;
-                        } else {
-                            el.innerHTML = text;
-                        }
-                    } else {
-                        el.textContent = text;
-                    }
-                }
-            });
-        }
-
-        langToggle.addEventListener('click', () => {
-            switchLanguage(currentLang === 'en' ? 'sw' : 'en');
-        });
-
-        // Initialize language
-        switchLanguage(currentLang);
 
         // Apply All Filters
         window.applyFilters = function() {
@@ -454,18 +340,11 @@
             let filteredData = {};
 
             for (let category in appData.foodData) {
-                // Category filter
-                if (categoryFilter !== 'all' && category !== categoryFilter) {
-                    continue;
-                }
+                if (categoryFilter !== 'all' && category !== categoryFilter) continue;
 
                 filteredData[category] = appData.foodData[category].filter(item => {
-                    // Search filter
-                    if (searchTerm && !item.name.toLowerCase().includes(searchTerm)) {
-                        return false;
-                    }
+                    if (searchTerm && !item.name.toLowerCase().includes(searchTerm)) return false;
 
-                    // Price filter
                     if (priceFilter !== 'all') {
                         if (priceFilter === '0-50' && item.price > 50) return false;
                         if (priceFilter === '50-100' && (item.price < 50 || item.price > 100)) return false;
@@ -473,7 +352,6 @@
                         if (priceFilter === '200+' && item.price < 200) return false;
                     }
 
-                    // Availability filter
                     if (availabilityFilter === 'available' && item.available === 0) return false;
                     if (availabilityFilter === 'low' && item.available >= 10) return false;
 
@@ -516,34 +394,179 @@
             }
         }
 
-        // Update search placeholder on language change
-        const originalSwitchLanguage = switchLanguage;
-        switchLanguage = function(lang) {
-            originalSwitchLanguage(lang);
-            const searchInput = document.getElementById('menuSearch');
-            if (searchInput) {
-                searchInput.placeholder = searchInput.getAttribute('data-' + lang + '-placeholder');
-            }
-        };
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            CartModule.init();
+            startAutoRefresh();
 
-        // Keyboard Shortcuts
-        document.addEventListener('keydown', (e) => {
-            // Ignore if typing in input field
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-            
-            if (e.key.toLowerCase() === 'c') {
+            // Manual refresh button
+            document.getElementById('refreshMenuBtn').addEventListener('click', async () => {
+                const btn = document.getElementById('refreshMenuBtn');
+                btn.textContent = '⏳ Refreshing...';
+                btn.disabled = true;
+                
+                await loadData();
+                
+                btn.textContent = '✓ Menu Updated!';
+                setTimeout(() => {
+                    btn.textContent = '🔄 Refresh Menu';
+                    btn.disabled = false;
+                }, 2000);
+            });
+
+            // Cart button
+            document.getElementById('cartBtn').addEventListener('click', () => {
                 CartModule.show();
-            } else if (e.key.toLowerCase() === 'r') {
-                loadData();
-            } else if (e.key === 'Escape') {
+            });
+
+            // Close cart button
+            document.getElementById('closeCartBtn').addEventListener('click', closeCart);
+
+            // Close payment button
+            document.getElementById('closePaymentBtn').addEventListener('click', closePayment);
+
+            // Close preferences button
+            document.getElementById('closePreferencesBtn').addEventListener('click', () => {
+                RecommendationUI.closePreferences();
+            });
+
+            // Preferences button
+            document.getElementById('preferencesBtn').addEventListener('click', () => {
+                RecommendationUI.showPreferences();
+            });
+
+            // Filter controls
+            document.getElementById('menuSearch').addEventListener('input', applyFilters);
+            document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+            document.getElementById('priceFilter').addEventListener('change', applyFilters);
+            document.getElementById('availabilityFilter').addEventListener('change', applyFilters);
+            document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+
+            // Checkout - Show payment modal
+            document.getElementById('checkoutBtn').addEventListener('click', () => {
+                console.log('Checkout button clicked');
+                const cart = CartModule.getItems();
+                console.log('Cart items:', cart);
+                if (cart.length === 0) {
+                    alert('Your cart is empty!');
+                    return;
+                }
+
+                console.log('Showing payment modal with total:', CartModule.getTotal());
+                PaymentModule.showPaymentModal(cart, CartModule.getTotal());
                 closeCart();
-                closePayment();
-            } else if (e.key.toLowerCase() === 'd') {
-                themeToggle.click();
-            } else if (e.key.toLowerCase() === 'l') {
-                langToggle.click();
+            });
+
+            // Payment method change
+            document.getElementById('paymentMethod').addEventListener('change', (e) => {
+                const mpesaSection = document.getElementById('mpesaSection');
+                if (e.target.value === 'mpesa') {
+                    mpesaSection.style.display = 'block';
+                } else {
+                    mpesaSection.style.display = 'none';
+                }
+            });
+
+            // Confirm payment and place order
+            document.getElementById('confirmPaymentBtn').addEventListener('click', async () => {
+                const cart = CartModule.getItems();
+                const total = CartModule.getTotal();
+                const method = document.getElementById('paymentMethod').value;
+                const mpesaPhone = method === 'mpesa' ? document.getElementById('mpesaPhone').value : null;
+
+                // Validate M-Pesa phone if selected
+                if (method === 'mpesa' && (!mpesaPhone || mpesaPhone.trim() === '')) {
+                    alert('Please enter your M-Pesa phone number');
+                    return;
+                }
+
+                try {
+                    showLoading('Processing your order...');
+                    const result = await PaymentModule.processPayment(method, cart, total, mpesaPhone);
+                    hideLoading();
+                    
+                    if (result.success) {
+                        showSuccess(`Order #${result.order.orderNumber} placed successfully! Total: KSh ${result.order.total}`);
+                        CartModule.clear();
+                        closePayment();
+                        setTimeout(() => loadData(), 1000);
+                    } else {
+                        if (result.error === 'Insufficient inventory') {
+                            alert(`❌ Order Failed - Insufficient Inventory\n\n${result.details}\n\nPlease refresh the menu and adjust your order.`);
+                            loadData();
+                        } else {
+                            alert('Error placing order: ' + (result.error || 'Unknown error'));
+                        }
+                    }
+                } catch (error) {
+                    hideLoading();
+                    alert('Error placing order: ' + error.message);
+                }
+            });
+
+            // Theme Toggle
+            const themeToggle = document.getElementById('themeToggle');
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            themeToggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+
+            themeToggle.addEventListener('click', () => {
+                const theme = document.documentElement.getAttribute('data-theme');
+                const newTheme = theme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            });
+
+            // Language Toggle
+            const langToggle = document.getElementById('langToggle');
+            let currentLang = localStorage.getItem('language') || 'en';
+            
+            function switchLanguage(lang) {
+                currentLang = lang;
+                localStorage.setItem('language', lang);
+                langToggle.textContent = lang === 'en' ? 'EN' : 'SW';
+                
+                document.querySelectorAll('[data-en][data-sw]').forEach(el => {
+                    const text = el.getAttribute('data-' + lang);
+                    if (text) {
+                        if (el.tagName === 'INPUT' || el.tagName === 'BUTTON') {
+                            if (el.hasAttribute('placeholder')) {
+                                el.placeholder = text;
+                            } else {
+                                el.innerHTML = text;
+                            }
+                        } else {
+                            el.textContent = text;
+                        }
+                    }
+                });
             }
-        });
-    </script>
+
+            langToggle.addEventListener('click', () => {
+                switchLanguage(currentLang === 'en' ? 'sw' : 'en');
+            });
+
+            switchLanguage(currentLang);
+
+            // Keyboard Shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                
+                if (e.key.toLowerCase() === 'c') {
+                    CartModule.show();
+                } else if (e.key.toLowerCase() === 'r') {
+                    loadData();
+                } else if (e.key === 'Escape') {
+                    closeCart();
+                    closePayment();
+                } else if (e.key.toLowerCase() === 'd') {
+                    themeToggle.click();
+                } else if (e.key.toLowerCase() === 'l') {
+                    langToggle.click();
+                }
+            });
+        });    </script>
 </body>
 </html>

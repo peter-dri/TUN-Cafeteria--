@@ -34,7 +34,9 @@ const AuthModule = (() => {
                 throw new Error(result.error || 'Login failed');
             }
 
-            currentAdmin = result.admin;
+            // Store admin info and token
+            currentAdmin = result.admin || {};
+            if (result.token) currentAdmin.token = result.token;
             localStorage.setItem('currentAdmin', JSON.stringify(currentAdmin));
             return currentAdmin;
         } catch (error) {
@@ -56,6 +58,10 @@ const AuthModule = (() => {
         return currentAdmin;
     }
 
+    function getToken() {
+        return currentAdmin && currentAdmin.token ? currentAdmin.token : null;
+    }
+
     function isSuperAdmin() {
         return currentAdmin && currentAdmin.role === 'Super Admin';
     }
@@ -66,6 +72,7 @@ const AuthModule = (() => {
         logout,
         isAuthenticated,
         getCurrentAdmin,
+        getToken,
         isSuperAdmin
     };
 })();

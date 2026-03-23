@@ -7,27 +7,14 @@ const AdminModule = (() => {
         try {
             const response = await fetch('/api/data');
             if (!response.ok) {
-                throw new Error(`Failed to load data (HTTP ${response.status})`);
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-
-            const data = await response.json();
-
-            if (!data || typeof data !== 'object') {
-                throw new Error('Invalid server response');
-            }
-
-            if (!data.foodData || typeof data.foodData !== 'object') {
-                data.foodData = { breakfast: [], lunch: [], snacks: [] };
-            }
-
-            if (!Array.isArray(data.orderHistory)) {
-                data.orderHistory = [];
-            }
-
-            appData = data;
+            appData = await response.json();
+            console.log('Data loaded successfully:', appData);
             return appData;
         } catch (error) {
-            console.error('Error loading admin data:', error);
+            console.error('Error loading data:', error);
+            alert('Failed to load data. Please refresh the page.');
             throw error;
         }
     }
@@ -48,43 +35,90 @@ const AdminModule = (() => {
     // POS Functions
     function renderPOSMenu(containerId) {
         const container = document.getElementById(containerId);
+        if (!container) {
+            console.error('POS Menu container not found:', containerId);
+            return;
+        }
+        
+        if (!appData || !appData.foodData) {
+            console.error('No food data available');
+            container.innerHTML = '<p style="color: red; padding: 1rem;">Error: No data loaded. Please refresh the page.</p>';
+            return;
+        }
+        
         container.innerHTML = '';
+        
+        // Override the grid layout to display categories vertically
+        container.style.display = 'block';
 
         let totalAvailableItems = 0;
+        let isFirstCategory = true;
 
-        for (let category in appData.foodData) {
-            const categoryTitle = document.createElement('h4');
-            categoryTitle.textContent = category.charAt(0).toUpperCase() + category.slice(1);
-            categoryTitle.style.cssText = 'color: #2E3192; margin-top: 1rem; margin-bottom: 0.5rem;';
+        // Define category order: Breakfast → Lunch → Snacks
+        const categoryOrder = ['breakfast', 'lunch', 'snacks'];
+        
+        categoryOrder.forEach(category => {
+            // Skip if category doesn't exist in data
+            if (!appData.foodData[category]) return;
             
             // Filter available items in this category
             const availableItems = appData.foodData[category].filter(item => item.available > 0);
             
             if (availableItems.length > 0) {
-                container.appendChild(categoryTitle);
+                // Create category section with better separation
+                const categorySection = document.createElement('div');
+                categorySection.style.cssText = `
+                    margin-top: ${isFirstCategory ? '0' : '2rem'};
+                    padding-top: ${isFirstCategory ? '0' : '1.5rem'};
+                    border-top: ${isFirstCategory ? 'none' : '3px solid #E2E8F0'};
+                `;
+                
+                // Category header with icon
+                const categoryHeader = document.createElement('div');
+                categoryHeader.style.cssText = 'background: linear-gradient(135deg, #2E3192 0%, #00A89A 100%); padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;';
+                
+                const categoryIcon = category === 'breakfast' ? '🌅' : category === 'lunch' ? '🍽️' : '🍪';
+                const categoryTitle = document.createElement('h4');
+                categoryTitle.textContent = `${categoryIcon} ${category.charAt(0).toUpperCase() + category.slice(1)}`;
+                categoryTitle.style.cssText = 'color: white; margin: 0; font-size: 1.125rem; font-weight: 700; letter-spacing: 0.5px;';
+                
+                const itemCount = document.createElement('span');
+                itemCount.textContent = `(${availableItems.length} items)`;
+                itemCount.style.cssText = 'color: rgba(255,255,255,0.8); font-size: 0.875rem; margin-left: auto;';
+                
+                categoryHeader.appendChild(categoryTitle);
+                categoryHeader.appendChild(itemCount);
+                categorySection.appendChild(categoryHeader);
+                
+                // Items grid
+                const itemsGrid = document.createElement('div');
+                itemsGrid.style.cssText = 'display: grid; gap: 0.75rem;';
+                
                 totalAvailableItems += availableItems.length;
 
                 availableItems.forEach(item => {
                     const itemDiv = document.createElement('div');
-                    itemDiv.style.cssText = 'background: white; padding: 1rem; border-radius: 0.375rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s;';
+                    itemDiv.style.cssText = 'background: white; padding: 1rem; border-radius: 0.375rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; border-left: 4px solid #2E3192;';
                     
                     // Add hover effects using event listeners instead of inline handlers
                     itemDiv.addEventListener('mouseover', () => {
                         itemDiv.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+                        itemDiv.style.transform = 'translateX(4px)';
                     });
                     itemDiv.addEventListener('mouseout', () => {
                         itemDiv.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                        itemDiv.style.transform = 'translateX(0)';
                     });
                     
                     itemDiv.setAttribute('data-item-id', item.id);
                     
                     itemDiv.innerHTML = `
                         <div>
-                            <strong style="display: block; margin-bottom: 0.25rem;">${item.name}</strong>
-                            <span style="color: #718096; font-size: 0.875rem;">${item.available} ${item.unit} available</span>
+                            <strong style="display: block; margin-bottom: 0.25rem; font-size: 1rem;">${item.name}</strong>
+                            <span style="color: #718096; font-size: 0.875rem;">📦 ${item.available} ${item.unit} available</span>
                         </div>
                         <div style="text-align: right;">
-                            <div style="color: #2E3192; font-weight: 700; font-size: 1.125rem;">KSh ${item.price}</div>
+                            <div style="color: #2E3192; font-weight: 700; font-size: 1.25rem;">KSh ${item.price}</div>
                             <button class="btn btn-primary btn-sm add-pos-btn" style="margin-top: 0.5rem;">Add</button>
                         </div>
                     `;
@@ -96,10 +130,18 @@ const AdminModule = (() => {
                         AdminModule.addToPOSCart(item.id, item.name, item.price);
                     });
                     
-                    container.appendChild(itemDiv);
+                    itemsGrid.appendChild(itemDiv);
                 });
+                
+                // Add items grid to category section
+                categorySection.appendChild(itemsGrid);
+                
+                // Add category section to main container
+                container.appendChild(categorySection);
+                
+                isFirstCategory = false;
             }
-        }
+        });
 
         // Show message if no items available
         if (totalAvailableItems === 0) {
@@ -254,7 +296,14 @@ const AdminModule = (() => {
                         // Get auth token from localStorage
                         const token = localStorage.getItem('authToken');
                         if (!token) {
-                            alert('Session expired. Please login again.');
+                            // Order created but can't initiate STK push without auth
+                            alert(`✓ Order placed successfully!\n\nOrder Number: ${orderResult.order.orderNumber}\nTotal: KSh ${orderResult.order.total}\n\n⚠️ Cannot initiate M-Pesa payment (not logged in as admin)\n\nCustomer can pay manually or admin can process payment from Orders tab.`);
+                            
+                            // Clear cart and refresh
+                            posCart = [];
+                            renderPOSCart();
+                            await loadData();
+                            renderPOSMenu('posMenu');
                             return;
                         }
 
@@ -313,6 +362,17 @@ const AdminModule = (() => {
 
     function renderInventory(containerId) {
         const container = document.getElementById(containerId);
+        if (!container) {
+            console.error('Inventory container not found:', containerId);
+            return;
+        }
+        
+        if (!appData || !appData.foodData) {
+            console.error('No food data available');
+            container.innerHTML = '<p style="color: red; padding: 1rem;">Error: No data loaded. Please refresh the page.</p>';
+            return;
+        }
+        
         container.innerHTML = '';
 
         const displayedIds = new Set();
@@ -637,7 +697,6 @@ const AdminModule = (() => {
         const paidOrders = appData.orderHistory.filter(o => o.paymentStatus === 'Paid').length;
         const pendingOrders = totalOrders - paidOrders;
         const paidPercentage = Math.round((paidOrders / totalOrders) * 100);
-        const paidDegrees = (paidPercentage / 100) * 360;
 
         // Calculate category sales
         const categorySales = { breakfast: 0, lunch: 0, snacks: 0 };
@@ -651,6 +710,7 @@ const AdminModule = (() => {
             });
         });
 
+        const totalCategorySales = Object.values(categorySales).reduce((a, b) => a + b, 0);
         const maxSales = Math.max(...Object.values(categorySales));
 
         // Calculate best-selling items
@@ -677,6 +737,12 @@ const AdminModule = (() => {
         const peakHour = Object.entries(hourCounts).sort((a, b) => b[1] - a[1])[0];
         const peakHourDisplay = peakHour ? `${peakHour[0]}:00 - ${parseInt(peakHour[0]) + 1}:00` : 'N/A';
 
+        // Payment methods breakdown
+        const paymentMethods = {};
+        appData.orderHistory.forEach(order => {
+            paymentMethods[order.paymentMethod] = (paymentMethods[order.paymentMethod] || 0) + 1;
+        });
+
         // Low stock alerts
         const lowStockItems = [];
         for (let cat in appData.foodData) {
@@ -690,54 +756,222 @@ const AdminModule = (() => {
         }
 
         container.innerHTML = `
-            <!-- Low Stock Alerts (Priority) -->
-            ${lowStockItems.length > 0 ? `
-                <div class="chart-container" style="border-left: 4px solid #E53E3E; background: linear-gradient(90deg, #FED7D7 0%, white 100%);">
-                    <h3 class="chart-title" style="color: #E53E3E;">⚠️ Inventory Alerts (${lowStockItems.length})</h3>
-                    <div style="display: grid; gap: 0.75rem;">
-                        ${lowStockItems.slice(0, 5).map(item => `
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: white; border-radius: 0.5rem; border-left: 3px solid ${item.outOfStock ? '#E53E3E' : '#F59E0B'};">
-                                <div>
-                                    <strong style="color: #2D3748;">${item.name}</strong>
-                                    <span style="color: #718096; font-size: 0.875rem; margin-left: 0.5rem;">(${item.category})</span>
-                                </div>
-                                <div style="text-align: right;">
-                                    <div style="font-weight: 700; color: ${item.outOfStock ? '#E53E3E' : '#F59E0B'};">
-                                        ${item.outOfStock ? '❌ OUT OF STOCK' : `⚠️ ${item.available} ${item.unit} left`}
+            <style>
+                .modern-analytics { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+                .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+                .stat-card-modern { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1.5rem; border-radius: 1rem; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: transform 0.3s; }
+                .stat-card-modern:hover { transform: translateY(-5px); }
+                .stat-card-modern.green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+                .stat-card-modern.blue { background: linear-gradient(135deg, #2E3192 0%, #00A89A 100%); }
+                .stat-card-modern.orange { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+                .stat-card-modern.purple { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+                .stat-value { font-size: 2.5rem; font-weight: 800; margin: 0; }
+                .stat-label { font-size: 0.875rem; opacity: 0.9; margin-top: 0.5rem; }
+                .chart-box { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+                .chart-title-modern { font-size: 1.25rem; font-weight: 700; color: #2D3748; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+                .progress-bar-container { background: #E2E8F0; height: 40px; border-radius: 20px; overflow: hidden; position: relative; margin: 0.75rem 0; }
+                .progress-bar-fill-modern { height: 100%; background: linear-gradient(90deg, #2E3192 0%, #00A89A 100%); display: flex; align-items: center; justify-content: flex-end; padding-right: 1rem; color: white; font-weight: 700; transition: width 0.5s ease; }
+                .pie-chart { width: 200px; height: 200px; border-radius: 50%; margin: 2rem auto; position: relative; }
+                .bar-chart-modern { display: flex; align-items: flex-end; justify-content: space-around; height: 300px; gap: 2rem; padding: 1rem; }
+                .bar-modern { flex: 1; background: linear-gradient(180deg, #2E3192 0%, #00A89A 100%); border-radius: 0.5rem 0.5rem 0 0; position: relative; transition: all 0.3s; min-height: 20px; display: flex; align-items: flex-start; justify-content: center; padding-top: 0.5rem; color: white; font-weight: 700; }
+                .bar-modern:hover { transform: scaleY(1.05); filter: brightness(1.1); }
+                .bar-label-modern { text-align: center; margin-top: 0.5rem; font-weight: 600; color: #4A5568; }
+                .insight-card { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 1.5rem; border-radius: 0.75rem; border-left: 4px solid #2E3192; }
+            </style>
+
+            <div class="modern-analytics">
+                <!-- Low Stock Alerts -->
+                ${lowStockItems.length > 0 ? `
+                    <div class="chart-box" style="border-left: 4px solid #E53E3E; background: linear-gradient(90deg, #FED7D7 0%, white 100%);">
+                        <h3 class="chart-title-modern" style="color: #E53E3E;">⚠️ Inventory Alerts (${lowStockItems.length})</h3>
+                        <div style="display: grid; gap: 0.75rem;">
+                            ${lowStockItems.slice(0, 5).map(item => `
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: white; border-radius: 0.5rem; border-left: 3px solid ${item.outOfStock ? '#E53E3E' : '#F59E0B'};">
+                                    <div>
+                                        <strong style="color: #2D3748; font-size: 1.1rem;">${item.name}</strong>
+                                        <span style="color: #718096; font-size: 0.875rem; margin-left: 0.5rem;">(${item.category})</span>
                                     </div>
-                                    <div style="font-size: 0.75rem; color: #718096;">
-                                        ${item.outOfStock ? 'Restock immediately' : 'Low stock warning'}
+                                    <div style="text-align: right;">
+                                        <div style="font-weight: 700; font-size: 1.1rem; color: ${item.outOfStock ? '#E53E3E' : '#F59E0B'};">
+                                            ${item.outOfStock ? '❌ OUT OF STOCK' : `⚠️ ${item.available} ${item.unit}`}
+                                        </div>
+                                        <div style="font-size: 0.75rem; color: #718096;">
+                                            ${item.outOfStock ? 'Restock immediately' : 'Low stock warning'}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <!-- Key Metrics Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card-modern blue">
+                        <div class="stat-value">${totalOrders}</div>
+                        <div class="stat-label">📋 Total Orders</div>
+                    </div>
+                    <div class="stat-card-modern green">
+                        <div class="stat-value">KSh ${totalRevenue.toLocaleString()}</div>
+                        <div class="stat-label">💰 Total Revenue</div>
+                    </div>
+                    <div class="stat-card-modern orange">
+                        <div class="stat-value">KSh ${avgOrder.toLocaleString()}</div>
+                        <div class="stat-label">📊 Average Order Value</div>
+                    </div>
+                    <div class="stat-card-modern purple">
+                        <div class="stat-value">${paidPercentage}%</div>
+                        <div class="stat-label">✅ Payment Success Rate</div>
+                    </div>
+                </div>
+
+                <!-- Revenue by Category with Percentages -->
+                <div class="chart-box">
+                    <h3 class="chart-title-modern">📈 Revenue by Category</h3>
+                    <div style="margin-bottom: 2rem;">
+                        ${Object.entries(categorySales).map(([cat, sales]) => {
+                            const percentage = Math.round((sales / totalCategorySales) * 100);
+                            const icon = cat === 'breakfast' ? '🌅' : cat === 'lunch' ? '🍽️' : '🍪';
+                            return `
+                                <div style="margin-bottom: 1.5rem;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                        <span style="font-weight: 600; color: #2D3748;">${icon} ${cat.charAt(0).toUpperCase() + cat.slice(1)}</span>
+                                        <span style="font-weight: 700; color: #2E3192;">KSh ${sales.toLocaleString()} (${percentage}%)</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill-modern" style="width: ${percentage}%;">
+                                            ${percentage}%
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <!-- Bar Chart Visualization -->
+                    <div class="bar-chart-modern">
+                        ${Object.entries(categorySales).map(([cat, sales]) => {
+                            const height = (sales / maxSales) * 100;
+                            const icon = cat === 'breakfast' ? '🌅' : cat === 'lunch' ? '🍽️' : '🍪';
+                            return `
+                                <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                                    <div class="bar-modern" style="height: ${height}%; width: 100%;">
+                                        KSh ${(sales / 1000).toFixed(1)}k
+                                    </div>
+                                    <div class="bar-label-modern">${icon}<br>${cat.charAt(0).toUpperCase() + cat.slice(1)}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="chart-box">
+                    <h3 class="chart-title-modern">💳 Payment Methods Distribution</h3>
+                    ${Object.entries(paymentMethods).map(([method, count]) => {
+                        const percentage = Math.round((count / totalOrders) * 100);
+                        const icon = method === 'mpesa' ? '📱' : '💵';
+                        const color = method === 'mpesa' ? '#00A89A' : '#2E3192';
+                        return `
+                            <div style="margin-bottom: 1.5rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 600; color: #2D3748;">${icon} ${method === 'mpesa' ? 'M-Pesa' : 'Cash'}</span>
+                                    <span style="font-weight: 700; color: ${color};">${count} orders (${percentage}%)</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill-modern" style="width: ${percentage}%; background: ${color};">
+                                        ${percentage}%
                                     </div>
                                 </div>
                             </div>
-                        `).join('')}
+                        `;
+                    }).join('')}
+                </div>
+
+                <!-- Payment Status Pie Chart -->
+                <div class="chart-box">
+                    <h3 class="chart-title-modern">💰 Payment Status Overview</h3>
+                    <div style="display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap;">
+                        <div class="pie-chart" style="background: conic-gradient(#48BB78 0deg ${paidPercentage * 3.6}deg, #F59E0B ${paidPercentage * 3.6}deg 360deg);">
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; width: 140px; height: 140px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                <div style="font-size: 2.5rem; font-weight: 800; color: #2E3192;">${paidPercentage}%</div>
+                                <div style="font-size: 0.875rem; color: #718096;">Paid</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <div style="width: 40px; height: 40px; background: #48BB78; border-radius: 0.5rem;"></div>
+                                <div>
+                                    <div style="font-weight: 700; font-size: 1.5rem; color: #2D3748;">${paidOrders}</div>
+                                    <div style="color: #718096;">Paid Orders (${paidPercentage}%)</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="width: 40px; height: 40px; background: #F59E0B; border-radius: 0.5rem;"></div>
+                                <div>
+                                    <div style="font-weight: 700; font-size: 1.5rem; color: #2D3748;">${pendingOrders}</div>
+                                    <div style="color: #718096;">Pending (${100 - paidPercentage}%)</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            ` : ''}
 
-            <!-- Stats Cards -->
-            <div class="analytics-grid">
-                <div class="stat-card">
-                    <h3>${totalOrders}</h3>
-                    <p>Total Orders</p>
+                <!-- Best Sellers -->
+                <div class="chart-box">
+                    <h3 class="chart-title-modern">🏆 Top 5 Best Selling Items</h3>
+                    <div style="display: grid; gap: 1rem;">
+                        ${bestSellers.map(([name, data], index) => {
+                            const maxRevenue = bestSellers[0][1].revenue;
+                            const percentage = Math.round((data.revenue / maxRevenue) * 100);
+                            const medals = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
+                            return `
+                                <div style="background: linear-gradient(90deg, ${index === 0 ? '#FFF5E6' : '#F7FAFC'} 0%, white 100%); padding: 1rem; border-radius: 0.5rem; border-left: 4px solid ${index === 0 ? '#F59E0B' : '#CBD5E0'};">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                            <span style="font-size: 1.5rem;">${medals[index]}</span>
+                                            <strong style="font-size: 1.1rem; color: #2D3748;">${name}</strong>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="font-weight: 700; color: #2E3192;">KSh ${data.revenue.toLocaleString()}</div>
+                                            <div style="font-size: 0.875rem; color: #718096;">${data.quantity} sold</div>
+                                        </div>
+                                    </div>
+                                    <div class="progress-bar-container" style="height: 8px;">
+                                        <div style="height: 100%; background: linear-gradient(90deg, #F59E0B 0%, #F97316 100%); width: ${percentage}%; border-radius: 4px;"></div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <h3>KSh ${totalRevenue.toLocaleString()}</h3>
-                    <p>Total Revenue</p>
+
+                <!-- Business Insights -->
+                <div class="chart-box">
+                    <h3 class="chart-title-modern">💡 Business Insights</h3>
+                    <div style="display: grid; gap: 1rem;">
+                        <div class="insight-card">
+                            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⏰</div>
+                            <div style="font-weight: 700; color: #2D3748; margin-bottom: 0.25rem;">Peak Order Time</div>
+                            <div style="font-size: 1.25rem; font-weight: 600; color: #2E3192;">${peakHourDisplay}</div>
+                            <div style="font-size: 0.875rem; color: #718096; margin-top: 0.5rem;">Most orders are placed during this hour</div>
+                        </div>
+                        <div class="insight-card">
+                            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📊</div>
+                            <div style="font-weight: 700; color: #2D3748; margin-bottom: 0.25rem;">Average Order Value</div>
+                            <div style="font-size: 1.25rem; font-weight: 600; color: #2E3192;">KSh ${avgOrder.toLocaleString()}</div>
+                            <div style="font-size: 0.875rem; color: #718096; margin-top: 0.5rem;">Customers spend an average of KSh ${avgOrder} per order</div>
+                        </div>
+                        <div class="insight-card">
+                            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🎯</div>
+                            <div style="font-weight: 700; color: #2D3748; margin-bottom: 0.25rem;">Most Popular Category</div>
+                            <div style="font-size: 1.25rem; font-weight: 600; color: #2E3192;">${Object.entries(categorySales).sort((a, b) => b[1] - a[1])[0][0].charAt(0).toUpperCase() + Object.entries(categorySales).sort((a, b) => b[1] - a[1])[0][0].slice(1)}</div>
+                            <div style="font-size: 0.875rem; color: #718096; margin-top: 0.5rem;">Generates KSh ${Object.entries(categorySales).sort((a, b) => b[1] - a[1])[0][1].toLocaleString()} in revenue</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <h3>KSh ${avgOrder.toLocaleString()}</h3>
-                    <p>Average Order</p>
-                </div>
-                <div class="stat-card">
-                    <h3>${paidPercentage}%</h3>
-                    <p>Payment Rate</p>
-                </div>
-                <div class="stat-card">
-                    <h3>${peakHourDisplay}</h3>
-                    <p>Peak Order Time</p>
-                </div>
-                <div class="stat-card">
+            </div>
+        `;
                     <h3>${lowStockItems.length}</h3>
                     <p>Low Stock Items</p>
                 </div>

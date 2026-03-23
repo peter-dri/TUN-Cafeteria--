@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart Test</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { padding: 20px; background: #f5f5f5; }
+        .test-section { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        .test-item { padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
+        .status { padding: 5px 10px; border-radius: 4px; font-weight: bold; }
+        .success { background: #4CAF50; color: white; }
+        .error { background: #f44336; color: white; }
+    </style>
+</head>
+<body>
+    <h1>🛒 Cart Functionality Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Controls</h2>
+        <button id="btnTestAdd" class="btn btn-primary">Test Add to Cart</button>
+        <button id="btnTestShow" class="btn btn-secondary">Test Show Cart</button>
+        <button id="btnTestClear" class="btn">Test Clear Cart</button>
+        <button id="btnCheckModules" class="btn">Check Modules</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Cart Status</h2>
+        <p>Cart Count: <strong id="cartCountDisplay">0</strong></p>
+        <p>Cart Items: <span id="cartItemsDisplay">[]</span></p>
+        <p>Cart Total: KSh <span id="cartTotalDisplay">0</span></p>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="testResults"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Sample Menu Items</h2>
+        <div id="sampleMenu"></div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Your Cart</h3>
+                <button id="btnCloseCart" class="close">&times;</button>
+            </div>
+            <div id="cartItems" class="cart-items"></div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    Total: <strong>KSh <span id="cartTotal">0</span></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 10000;"></div>
+
+    <!-- Hidden cart count for module -->
+    <span id="cartCount" style="display: none;">0</span>
+
+    <script src="modules/cart.js"></script>
+    <script src="modules/menu.js"></script>
+    <script>
+        // Initialize
+        CartModule.init();
+
+        function log(message, type = 'info') {
+            const results = document.getElementById('testResults');
+            const div = document.createElement('div');
+            div.className = 'test-item';
+            div.innerHTML = `<span class="status ${type === 'success' ? 'success' : type === 'error' ? 'error' : ''}">${type.toUpperCase()}</span> ${message}`;
+            results.appendChild(div);
+            console.log(`[${type}]`, message);
+        }
+
+        function updateDisplay() {
+            const items = CartModule.getItems();
+            const total = CartModule.getTotal();
+            const count = items.reduce((sum, item) => sum + item.quantity, 0);
+            
+            document.getElementById('cartCountDisplay').textContent = count;
+            document.getElementById('cartItemsDisplay').textContent = JSON.stringify(items, null, 2);
+            document.getElementById('cartTotalDisplay').textContent = total;
+        }
+
+        function testAddToCart() {
+            log('Testing add to cart...', 'info');
+            try {
+                CartModule.add(1, 'Test Rice and Curry', 450, 10);
+                updateDisplay();
+                log('✅ Successfully added item to cart', 'success');
+            } catch (error) {
+                log('❌ Error adding to cart: ' + error.message, 'error');
+            }
+        }
+
+        function testShowCart() {
+            log('Testing show cart...', 'info');
+            try {
+                CartModule.show();
+                log('✅ Cart modal opened', 'success');
+            } catch (error) {
+                log('❌ Error showing cart: ' + error.message, 'error');
+            }
+        }
+
+        function testClearCart() {
+            log('Testing clear cart...', 'info');
+            try {
+                CartModule.clear();
+                updateDisplay();
+                log('✅ Cart cleared', 'success');
+            } catch (error) {
+                log('❌ Error clearing cart: ' + error.message, 'error');
+            }
+        }
+
+        function checkModules() {
+            log('Checking modules...', 'info');
+            
+            if (typeof CartModule !== 'undefined') {
+                log('✅ CartModule is loaded', 'success');
+                log(`CartModule methods: ${Object.keys(CartModule).join(', ')}`, 'info');
+            } else {
+                log('❌ CartModule is NOT loaded', 'error');
+            }
+
+            if (typeof MenuModule !== 'undefined') {
+                log('✅ MenuModule is loaded', 'success');
+            } else {
+                log('❌ MenuModule is NOT loaded', 'error');
+            }
+
+            const cartModal = document.getElementById('cartModal');
+            if (cartModal) {
+                log('✅ Cart modal element exists', 'success');
+            } else {
+                log('❌ Cart modal element NOT found', 'error');
+            }
+
+            const toastContainer = document.getElementById('toastContainer');
+            if (toastContainer) {
+                log('✅ Toast container exists', 'success');
+            } else {
+                log('❌ Toast container NOT found', 'error');
+            }
+        }
+
+        function closeCart() {
+            document.getElementById('cartModal').style.display = 'none';
+        }
+
+        // Load sample menu items
+        async function loadSampleMenu() {
+            try {
+                const response = await fetch('/api/data');
+                const data = await response.json();
+                
+                const sampleMenu = document.getElementById('sampleMenu');
+                const items = [
+                    ...data.foodData.breakfast.slice(0, 2),
+                    ...data.foodData.lunch.slice(0, 2),
+                    ...data.foodData.snacks.slice(0, 2)
+                ];
+
+                items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'test-item';
+                    div.innerHTML = `<strong>${item.name}</strong> - KSh ${item.price}`;
+
+                    const addBtn = document.createElement('button');
+                    addBtn.className = 'btn btn-sm btn-primary';
+                    addBtn.textContent = 'Add to Cart';
+                    addBtn.addEventListener('click', () => CartModule.add(item.id, item.name, item.price, item.available));
+
+                    div.appendChild(addBtn);
+                    sampleMenu.appendChild(div);
+                });
+
+                log('✅ Sample menu loaded with real data', 'success');
+            } catch (error) {
+                log('❌ Error loading sample menu: ' + error.message, 'error');
+            }
+        }
+
+        // Auto-check on load and wire up buttons (CSP-safe)
+        window.addEventListener('DOMContentLoaded', () => {
+            log('Page loaded, running initial checks...', 'info');
+            checkModules();
+            loadSampleMenu();
+
+            // Wire up test control buttons
+            const btnAdd = document.getElementById('btnTestAdd');
+            const btnShow = document.getElementById('btnTestShow');
+            const btnClear = document.getElementById('btnTestClear');
+            const btnCheck = document.getElementById('btnCheckModules');
+            const btnClose = document.getElementById('btnCloseCart');
+
+            if (btnAdd) btnAdd.addEventListener('click', testAddToCart);
+            if (btnShow) btnShow.addEventListener('click', testShowCart);
+            if (btnClear) btnClear.addEventListener('click', testClearCart);
+            if (btnCheck) btnCheck.addEventListener('click', checkModules);
+            if (btnClose) btnClose.addEventListener('click', closeCart);
+        });
+    </script>
+</body>
+</html>

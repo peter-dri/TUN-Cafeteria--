@@ -12,39 +12,77 @@ const RecommendationUI = (() => {
         }
         
         container.style.display = 'block';
-        container.innerHTML = `
-            <div class="recommendations-header">
-                <h2>✨ Recommended for You</h2>
-                <p>Based on your preferences and popular choices</p>
-            </div>
-            <div class="recommendations-scroll" id="recommendationsScroll">
-                ${recommendations.map(rec => createRecommendationCard(rec)).join('')}
-            </div>
-        `;
+        container.innerHTML = '';
+
+        const header = document.createElement('div');
+        header.className = 'recommendations-header';
+        header.innerHTML = '<h2>✨ Recommended for You</h2><p>Based on your preferences and popular choices</p>';
+
+        const scroll = document.createElement('div');
+        scroll.className = 'recommendations-scroll';
+        scroll.id = 'recommendationsScroll';
+
+        recommendations.forEach(rec => {
+            const card = createRecommendationElement(rec);
+            scroll.appendChild(card);
+        });
+
+        container.appendChild(header);
+        container.appendChild(scroll);
     }
     
-    // Create recommendation card HTML
-    function createRecommendationCard(recommendation) {
+    // Create recommendation card element
+    function createRecommendationElement(recommendation) {
         const item = recommendation.item;
         const matchingTags = getMatchingPreferenceTags(item);
-        
-        return `
-            <div class="recommendation-card" data-item-id="${item.id}">
-                <div class="rec-badge">${getRecommendationIcon(recommendation.strategy)}</div>
-                ${matchingTags.length > 0 ? `
-                    <div class="rec-tags">
-                        ${matchingTags.map(tag => `<span class="tag-badge">${tag}</span>`).join('')}
-                    </div>
-                ` : ''}
-                <h3>${item.name}</h3>
-                <p class="price">KSh ${item.price}</p>
-                <p class="rec-reason">${recommendation.reason}</p>
-                <p class="stock">${item.available} ${item.unit} available</p>
-                <button class="btn btn-primary btn-sm" onclick="RecommendationUI.addRecommendedItem(${item.id}, '${item.name}', ${item.price}, ${item.available}, '${recommendation.strategy}')">
-                    Add to Cart
-                </button>
-            </div>
-        `;
+
+        const card = document.createElement('div');
+        card.className = 'recommendation-card';
+        card.setAttribute('data-item-id', item.id);
+
+        const badge = document.createElement('div');
+        badge.className = 'rec-badge';
+        badge.textContent = getRecommendationIcon(recommendation.strategy);
+        card.appendChild(badge);
+
+        if (matchingTags.length > 0) {
+            const tagsWrap = document.createElement('div');
+            tagsWrap.className = 'rec-tags';
+            matchingTags.forEach(tag => {
+                const span = document.createElement('span');
+                span.className = 'tag-badge';
+                span.textContent = tag;
+                tagsWrap.appendChild(span);
+            });
+            card.appendChild(tagsWrap);
+        }
+
+        const h3 = document.createElement('h3');
+        h3.textContent = item.name;
+        card.appendChild(h3);
+
+        const priceP = document.createElement('p');
+        priceP.className = 'price';
+        priceP.textContent = `KSh ${item.price}`;
+        card.appendChild(priceP);
+
+        const reasonP = document.createElement('p');
+        reasonP.className = 'rec-reason';
+        reasonP.textContent = recommendation.reason;
+        card.appendChild(reasonP);
+
+        const stockP = document.createElement('p');
+        stockP.className = 'stock';
+        stockP.textContent = `${item.available} ${item.unit} available`;
+        card.appendChild(stockP);
+
+        const addBtn = document.createElement('button');
+        addBtn.className = 'btn btn-primary btn-sm';
+        addBtn.textContent = 'Add to Cart';
+        addBtn.addEventListener('click', () => addRecommendedItem(item.id, item.name, item.price, item.available, recommendation.strategy));
+        card.appendChild(addBtn);
+
+        return card;
     }
     
     // Get icon based on recommendation strategy
@@ -158,12 +196,18 @@ const RecommendationUI = (() => {
             </div>
             
             <div class="pref-actions">
-                <button class="btn btn-secondary" onclick="RecommendationUI.closePreferences()">Cancel</button>
-                <button class="btn btn-primary" onclick="RecommendationUI.savePreferences()">Save Preferences</button>
+                <button class="btn btn-secondary pref-cancel">Cancel</button>
+                <button class="btn btn-primary pref-save">Save Preferences</button>
             </div>
         `;
         
         modal.style.display = 'flex';
+
+        // Attach listeners to preference action buttons (CSP-safe)
+        const cancelBtn = content.querySelector('.pref-cancel');
+        const saveBtn = content.querySelector('.pref-save');
+        if (cancelBtn) cancelBtn.addEventListener('click', closePreferences);
+        if (saveBtn) saveBtn.addEventListener('click', savePreferences);
     }
     
     // Save preferences

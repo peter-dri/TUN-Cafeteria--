@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Admin Panel Diagnostic Test</h1>
+    
+    <div class="test-section">
+        <h2>1. Test API Connection</h2>
+        <button onclick="testAPIConnection()">Test /api/data</button>
+        <div id="apiResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Test AdminModule Loading</h2>
+        <button onclick="testAdminModule()">Check AdminModule</button>
+        <div id="moduleResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Test Inventory Rendering</h2>
+        <button onclick="testInventory()">Test Inventory</button>
+        <div id="inventoryResult"></div>
+        <div id="inventoryDisplay" style="margin-top: 10px;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Test Quick Order (POS)</h2>
+        <button onclick="testPOS()">Test POS Menu</button>
+        <div id="posResult"></div>
+        <div id="posDisplay" style="margin-top: 10px;"></div>
+    </div>
+
+    <script src="modules/auth.js"></script>
+    <script src="modules/confirm.js"></script>
+    <script src="modules/admin.js"></script>
+    <script>
+        async function testAPIConnection() {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = '<p>Testing...</p>';
+            
+            try {
+                const response = await fetch('/api/data');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <h3>✓ API Connection Successful</h3>
+                        <p>Food Categories: ${Object.keys(data.foodData || {}).join(', ')}</p>
+                        <p>Total Orders: ${(data.orderHistory || []).length}</p>
+                        <details>
+                            <summary>View Raw Data</summary>
+                            <pre>${JSON.stringify(data, null, 2).substring(0, 500)}...</pre>
+                        </details>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>✗ API Connection Failed</h3>
+                        <p>${error.message}</p>
+                        <p><strong>Solution:</strong> Make sure the server is running with <code>npm start</code></p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testAdminModule() {
+            const resultDiv = document.getElementById('moduleResult');
+            
+            if (typeof AdminModule === 'undefined') {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>✗ AdminModule Not Loaded</h3>
+                        <p>The admin.js module failed to load</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const methods = [
+                'loadData', 'renderInventory', 'renderPOSMenu', 
+                'addToPOSCart', 'placePOSOrder', 'updateQuantity'
+            ];
+            
+            const available = methods.filter(m => typeof AdminModule[m] === 'function');
+            const missing = methods.filter(m => typeof AdminModule[m] !== 'function');
+            
+            resultDiv.innerHTML = `
+                <div class="${missing.length === 0 ? 'success' : 'error'}">
+                    <h3>${missing.length === 0 ? '✓' : '✗'} AdminModule Status</h3>
+                    <p>Available methods: ${available.join(', ')}</p>
+                    ${missing.length > 0 ? `<p style="color: red;">Missing: ${missing.join(', ')}</p>` : ''}
+                </div>
+            `;
+        }
+
+        async function testInventory() {
+            const resultDiv = document.getElementById('inventoryResult');
+            const displayDiv = document.getElementById('inventoryDisplay');
+            
+            resultDiv.innerHTML = '<p>Testing...</p>';
+            
+            try {
+                await AdminModule.loadData();
+                AdminModule.renderInventory('inventoryDisplay');
+                
+                const items = displayDiv.querySelectorAll('.admin-item');
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <h3>✓ Inventory Rendering Successful</h3>
+                        <p>Found ${items.length} items in inventory</p>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>✗ Inventory Rendering Failed</h3>
+                        <p>${error.message}</p>
+                        <pre>${error.stack}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        async function testPOS() {
+            const resultDiv = document.getElementById('posResult');
+            const displayDiv = document.getElementById('posDisplay');
+            
+            resultDiv.innerHTML = '<p>Testing...</p>';
+            
+            try {
+                await AdminModule.loadData();
+                AdminModule.renderPOSMenu('posDisplay');
+                
+                const items = displayDiv.children.length;
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <h3>✓ POS Menu Rendering Successful</h3>
+                        <p>Found ${items} menu sections/items</p>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>✗ POS Menu Rendering Failed</h3>
+                        <p>${error.message}</p>
+                        <pre>${error.stack}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-run basic tests on load
+        window.addEventListener('load', () => {
+            testAPIConnection();
+            testAdminModule();
+        });
+    </script>
+</body>
+</html>
