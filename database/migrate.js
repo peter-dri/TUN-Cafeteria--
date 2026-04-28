@@ -32,7 +32,6 @@ async function migrateData() {
         await connection.execute('TRUNCATE TABLE food_tags');
         await connection.execute('TRUNCATE TABLE food_items');
         await connection.execute('TRUNCATE TABLE admin_accounts');
-        await connection.execute('TRUNCATE TABLE recommendation_metrics');
         await connection.execute('SET FOREIGN_KEY_CHECKS = 1');
         console.log('🧹 Cleared existing data');
         
@@ -136,13 +135,7 @@ async function migrateData() {
         `, [jsonData.orderCounter]);
         console.log(`✅ Updated order counter to ${jsonData.orderCounter}`);
         
-        // Migrate recommendation metrics if they exist
-        if (jsonData.recommendationMetrics && jsonData.recommendationMetrics.byStrategy) {
-            console.log('📊 Migrating recommendation metrics...');
-            // This would require more complex logic to recreate individual metric entries
-            // For now, we'll skip this as it's analytical data that can be rebuilt
-            console.log('ℹ️  Recommendation metrics will be rebuilt from new interactions');
-        }
+        // Recommendation metrics omitted from migration (analytics data can be rebuilt)
         
         console.log('🎉 Data migration completed successfully!');
         

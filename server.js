@@ -1140,52 +1140,7 @@ app.put('/api/user/preferences/:userId', (req, res) => {
     }
 });
 
-// ============= RECOMMENDATIONS ENDPOINTS =============
-
-/**
- * GET /api/recommendations/:userId
- * Get personalized recommendations for a user
- */
-app.get('/api/recommendations/:userId', (req, res) => {
-    try {
-        const { userId } = req.params;
-        const { limit } = req.query;
-        const maxLimit = Math.min(parseInt(limit) || 5, 20);
-
-        const data = loadData();
-        const allItems = [];
-
-        // Flatten all food items
-        for (const category in data.foodData) {
-            allItems.push(...data.foodData[category]);
-        }
-
-        // Get user preferences
-        const userPrefs = data.userPreferences?.[userId] || {};
-        const favoriteItems = userPrefs.favoriteItems || [];
-        const dislikedItems = userPrefs.dislikedItems || [];
-
-        // Simple recommendation logic: prioritize favorite type items
-        let recommendations = allItems
-            .filter(item => !dislikedItems.includes(item.id) && item.available > 0)
-            .sort((a, b) => {
-                // Boost items similar to favorites
-                const isFavA = favoriteItems.includes(a.id) ? 1 : 0;
-                const isFavB = favoriteItems.includes(b.id) ? 1 : 0;
-                return isFavB - isFavA || b.totalOrders - a.totalOrders;
-            })
-            .slice(0, maxLimit);
-
-        res.json({
-            userId,
-            recommendations,
-            count: recommendations.length
-        });
-    } catch (error) {
-        console.error('Error fetching recommendations:', error);
-        res.status(500).json({ error: 'Failed to fetch recommendations' });
-    }
-});
+// Recommendations endpoints removed
 
 // ============= PAYMENT VERIFICATION =============
 

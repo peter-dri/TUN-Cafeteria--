@@ -22,7 +22,7 @@ async function clearMySQL() {
         // Temporarily disable FK checks to allow cleaning of referenced rows
         await conn.query('SET FOREIGN_KEY_CHECKS = 0');
 
-        const tables = ['food_tags', 'recommendation_metrics', 'reviews', 'food_items'];
+        const tables = ['food_tags', 'reviews', 'food_items'];
         for (const t of tables) {
             const [res] = await conn.query(`DELETE FROM ${t}`);
             console.log(`[MySQL] Deleted rows from ${t}`);

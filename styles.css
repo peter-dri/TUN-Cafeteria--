@@ -1100,141 +1100,7 @@ html {
     color: var(--text-secondary);
 }
 
-/* ===================================
-   AI RECOMMENDATIONS SECTION
-   =================================== */
-
-.recommendations-section {
-    margin: 3rem 0;
-    padding: 2rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 1rem;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-}
-
-.recommendations-header {
-    text-align: center;
-    color: white;
-    margin-bottom: 2rem;
-}
-
-.recommendations-header h2 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.recommendations-header p {
-    font-size: 1rem;
-    opacity: 0.9;
-}
-
-.recommendations-scroll {
-    display: flex;
-    gap: 1.5rem;
-    overflow-x: auto;
-    padding: 1rem 0;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-}
-
-.recommendations-scroll::-webkit-scrollbar {
-    height: 8px;
-}
-
-.recommendations-scroll::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-}
-
-.recommendations-scroll::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-}
-
-.recommendations-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
-}
-
-.recommendation-card {
-    min-width: 280px;
-    background: white;
-    border-radius: 1rem;
-    padding: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    position: relative;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    flex-shrink: 0;
-}
-
-.recommendation-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-}
-
-.rec-badge {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.rec-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.tag-badge {
-    background: #EDF2F7;
-    color: #2D3748;
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: capitalize;
-}
-
-.recommendation-card h3 {
-    color: #2D3748;
-    font-size: 1.25rem;
-    margin: 0.5rem 0;
-}
-
-.recommendation-card .price {
-    color: #2E3192;
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin: 0.5rem 0;
-}
-
-.rec-reason {
-    color: #718096;
-    font-size: 0.875rem;
-    font-style: italic;
-    margin: 0.5rem 0;
-    min-height: 2.5rem;
-}
-
-.recommendation-card .stock {
-    color: #48BB78;
-    font-size: 0.875rem;
-    margin: 0.5rem 0;
-}
-
-.recommendation-card .btn {
-    width: 100%;
-    margin-top: 1rem;
-}
+/* Recommendations removed */
 
 /* Preferences Modal Styles */
 .pref-section {
@@ -1309,39 +1175,7 @@ html {
     flex: 1;
 }
 
-/* Dark Mode for Recommendations */
-body.dark-mode .recommendations-section {
-    background: linear-gradient(135deg, #4c51bf 0%, #553c9a 100%);
-}
-
-body.dark-mode .recommendation-card {
-    background: #2D3748;
-}
-
-body.dark-mode .recommendation-card h3 {
-    color: #E2E8F0;
-}
-
-body.dark-mode .recommendation-card .price {
-    color: #90CDF4;
-}
-
-body.dark-mode .rec-reason {
-    color: #A0AEC0;
-}
-
-body.dark-mode .tag-badge {
-    background: #4A5568;
-    color: #E2E8F0;
-}
-
-body.dark-mode .pref-section h4 {
-    color: #E2E8F0;
-}
-
-body.dark-mode .pref-checkbox {
-    background: #4A5568;
-}
+/* Recommendation dark-mode styles removed */
 
 body.dark-mode .pref-checkbox:hover {
     background: #2D3748;
@@ -1613,18 +1447,6 @@ button:focus {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .recommendations-section {
-        padding: 1.5rem 1rem;
-    }
-    
-    .recommendations-header h2 {
-        font-size: 1.5rem;
-    }
-    
-    .recommendation-card {
-        min-width: 240px;
-    }
-    
     .pref-actions {
         flex-direction: column;
     }

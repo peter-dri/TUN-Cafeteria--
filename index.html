@@ -98,10 +98,7 @@
             </div>
         </div>
 
-        <!-- AI Recommendations Section -->
-        <section id="recommendationsSection" class="recommendations-section" style="display: none;">
-            <!-- Recommendations will be dynamically inserted here -->
-        </section>
+        <!-- Recommendations removed -->
 
         <!-- Preferences Button -->
         <div style="text-align: center; margin: 2rem 0;">
@@ -245,9 +242,6 @@
 
     <!-- Scripts -->
     <script src="modules/userProfile.js"></script>
-    <script src="modules/recommendations.js"></script>
-    <script src="modules/recommendationAnalytics.js"></script>
-    <script src="modules/recommendationUI.js"></script>
     <script src="modules/menu.js"></script>
     <script src="modules/cart.js"></script>
     <script src="modules/payment.js"></script>
@@ -305,11 +299,7 @@
                 appData = await response.json();
                 MenuModule.render(appData.foodData);
                 
-                // Initialize recommendation engine
-                RecommendationEngine.init(appData.foodData, appData.orderHistory);
-                
-                // Load and display recommendations
-                RecommendationUI.loadRecommendations();
+                // Recommendations removed: no-op
                 
                 hideLoading();
             } catch (error) {
@@ -419,12 +409,23 @@
 
             // Close preferences button
             document.getElementById('closePreferencesBtn').addEventListener('click', () => {
-                RecommendationUI.closePreferences();
+                closePreferences();
             });
 
+
+                // Preferences modal helpers (simple show/hide)
+                function showPreferences() {
+                    const modal = document.getElementById('preferencesModal');
+                    if (modal) modal.style.display = 'flex';
+                }
+
+                function closePreferences() {
+                    const modal = document.getElementById('preferencesModal');
+                    if (modal) modal.style.display = 'none';
+                }
             // Preferences button
             document.getElementById('preferencesBtn').addEventListener('click', () => {
-                RecommendationUI.showPreferences();
+                showPreferences();
             });
 
             // Filter controls
