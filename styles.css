@@ -31,9 +31,9 @@ html {
     color: white;
     padding: 1rem 0;
     margin: 0.75rem 1rem 0;
-    border-radius: 1.25rem;
+    border-radius: 1.25rem 1.25rem 0 0;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(46, 49, 146, 0.4);
+    box-shadow: 0 4px 12px rgba(46, 49, 146, 0.35);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -89,13 +89,33 @@ html {
 }
 
 .header-logo img {
-    height: 50px;
+    height: 48px;
     width: auto;
-    transition: transform 0.3s ease;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    border-radius: 8px;
+    padding: 4px;
+    background: rgba(255,255,255,0.06);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
 }
 
 .header-logo img:hover {
-    transform: scale(1.1) rotate(5deg);
+    transform: scale(1.03);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+/* SVG logo styling so inline SVGs match the image styling */
+.header-logo svg {
+    height: 48px;
+    width: auto;
+    display: block;
+    transition: transform 0.18s ease, filter 0.18s ease;
+    border-radius: 8px;
+    padding: 4px;
+    background: rgba(255,255,255,0.03);
+}
+
+.header-logo svg:hover {
+    transform: scale(1.03);
 }
 
 .header h1 {
@@ -122,10 +142,13 @@ html {
 .welcome {
     background: linear-gradient(135deg, #2E3192 0%, #1a1d5c 100%);
     color: white;
-    padding: 3rem 0;
+    margin: 0 1rem 1rem;
+    padding: 2.5rem 0 3rem;
     text-align: center;
     position: relative;
     overflow: hidden;
+    border-radius: 0 0 1.25rem 1.25rem;
+    box-shadow: 0 12px 24px rgba(46, 49, 146, 0.18);
 }
 
 .welcome::before {
@@ -136,7 +159,7 @@ html {
     right: 0;
     bottom: 0;
     background: url('assets/images/logo.png.jpg') center/contain no-repeat;
-    opacity: 0.05;
+    opacity: 0.02;
     pointer-events: none;
 }
 
