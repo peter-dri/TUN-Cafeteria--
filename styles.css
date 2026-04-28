@@ -30,6 +30,9 @@ html {
     background: linear-gradient(135deg, #2E3192 0%, #1a1d5c 100%);
     color: white;
     padding: 1rem 0;
+    margin: 0.75rem 1rem 0;
+    border-radius: 1.25rem;
+    overflow: hidden;
     box-shadow: 0 4px 12px rgba(46, 49, 146, 0.4);
     position: sticky;
     top: 0;

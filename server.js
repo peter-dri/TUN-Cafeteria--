@@ -6,34 +6,13 @@ const path = require('path');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const mpesaModule = require('./modules/mpesa');
+require('dotenv').config();
 
-<<<<<<< HEAD
-// Import new modules
+// Core server modules used by the JSON-backed API
 const InventoryManager = require('./modules/inventory');
 const AnalyticsManager = require('./modules/analytics');
 const LoyaltyManager = require('./modules/loyalty');
 const RoleManager = require('./modules/roles');
-=======
-require('dotenv').config();
-
-// Import SQLite database connection and models
-const dbConnection = require('./database/sqlite-connection');
-const Admin = require('./database/models/sqlite/Admin');
-const FoodItem = require('./database/models/sqlite/FoodItem');
-const Order = require('./database/models/sqlite/Order');
-
-// Import existing modules
-const menuModule = require('./modules/menu');
-const cartModule = require('./modules/cart');
-const authModule = require('./modules/auth');
-const adminModule = require('./modules/admin');
-const paymentModule = require('./modules/payment');
-const reviewsModule = require('./modules/reviews');
-const recommendationsModule = require('./modules/recommendations');
-const userProfileModule = require('./modules/userProfile');
-const recommendationUIModule = require('./modules/recommendationUI');
-const recommendationAnalyticsModule = require('./modules/recommendationAnalytics');
->>>>>>> f8f8213b5ba510b7bb4bb8290c3d8637abeb125e
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -390,126 +369,6 @@ app.post('/api/orders', (req, res) => {
             paymentMethod,
             mpesaPhone: paymentMethod === 'mpesa' ? mpesaPhone : undefined,
                 paymentStatus: paymentMethod === 'mpesa' ? 'Pending Verification' : 'Pending Confirmation',
-            orderStatus: 'Received',
-            lastStatusUpdate: timestamp,
-            notes: []
-        };
-
-        // Add order to history
-        data.orderHistory.unshift(newOrder);
-
-        // Award loyalty points if phone number and payment confirmed
-        if (mpesaPhone && newOrder.paymentStatus === 'Paid') {
-            const loyaltyResult = LoyaltyManager.awardPoints(data, mpesaPhone, total, orderNumber);
-            newOrder.loyaltyPoints = loyaltyResult.pointsAwarded;
-            console.log(`💎 ${loyaltyResult.message}`);
-        }
-
-        // Save data
-        if (saveData(data)) {
-            console.log(`✅ Order ${orderNumber} created successfully`);
-            res.status(201).json({
-                success: true,
-                order: newOrder,
-                message: 'Order placed successfully'
-            });
-        } else {
-            res.status(500).json({
-                success: false,
-                error: 'Failed to save order'
-            });
-        }
-    } catch (error) {
-        console.error('Error creating order:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Failed to create order',
-            details: error.message
-        });
-    }
-});
-
-/**
- * Backward compatibility: POST /api/order
- * Alias for POST /api/orders
- */
-app.post('/api/order', (req, res) => {
-    try {
-        const { items, total, paymentMethod, mpesaPhone } = req.body;
-
-        // Validate order data
-        const validationErrors = validateOrderData(items, total, paymentMethod, mpesaPhone);
-        if (validationErrors.length > 0) {
-            return res.status(400).json({
-                success: false,
-                error: 'Validation failed',
-                details: validationErrors
-            });
-        }
-
-        // Load current data
-        const data = loadData();
-
-        // Check inventory
-        const inventoryErrors = [];
-        for (const reqItem of items) {
-            let found = false;
-            for (const category in data.foodData) {
-                const foodItem = data.foodData[category].find(item => item.id === reqItem.id);
-                if (foodItem) {
-                    if (foodItem.available < reqItem.quantity) {
-                        inventoryErrors.push({
-                            itemName: foodItem.name,
-                            requested: reqItem.quantity,
-                            available: foodItem.available
-                        });
-                    }
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                return res.status(404).json({
-                    success: false,
-                    error: 'Item not found',
-                    itemId: reqItem.id
-                });
-            }
-        }
-
-        if (inventoryErrors.length > 0) {
-            return res.status(400).json({
-                success: false,
-                error: 'Insufficient inventory',
-                inventoryErrors
-            });
-        }
-
-        // Deduct from inventory
-        for (const reqItem of items) {
-            for (const category in data.foodData) {
-                const foodItem = data.foodData[category].find(item => item.id === reqItem.id);
-                if (foodItem) {
-                    foodItem.available -= reqItem.quantity;
-                    break;
-                }
-            }
-        }
-
-        // Create order
-        const orderId = Date.now();
-        const orderNumber = `TUC-${++data.orderCounter}`;
-        const timestamp = new Date().toLocaleString();
-
-        const newOrder = {
-            id: orderId,
-            orderNumber,
-            timestamp,
-            items,
-            total,
-            paymentMethod,
-            mpesaPhone: paymentMethod === 'mpesa' ? mpesaPhone : undefined,
-            paymentStatus: paymentMethod === 'mpesa' ? 'Pending Verification' : 'Pending Confirmation',
             orderStatus: 'Received',
             lastStatusUpdate: timestamp,
             notes: []

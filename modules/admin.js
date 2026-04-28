@@ -234,7 +234,7 @@ const AdminModule = (() => {
 
         try {
             // First, create the order
-            const orderResponse = await fetch('/api/order', {
+            const orderResponse = await fetch('/api/orders', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

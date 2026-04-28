@@ -136,7 +136,7 @@ if (hasErrors) {
     console.log('✅ SETUP LOOKS GOOD!');
     console.log('\nNext steps:');
     console.log('  1. Run: npm start');
-    console.log('  2. Open: http://localhost:3000/test-admin-fix.html');
+    console.log('  2. Open: http://localhost:3000/admin.html');
     console.log('  3. Test: http://localhost:3000/admin.html');
     console.log('\n🎉 Your cafeteria system is ready to use!');
     process.exit(0);
