@@ -1082,63 +1082,7 @@ app.post('/api/reviews/:itemId', (req, res) => {
     }
 });
 
-// ============= USER PREFERENCES & PROFILE ENDPOINTS =============
-
-/**
- * GET /api/user/preferences/:userId
- * Get user preferences
- */
-app.get('/api/user/preferences/:userId', (req, res) => {
-    try {
-        const { userId } = req.params;
-        const data = loadData();
-
-        const preferences = data.userPreferences?.[userId] || {
-            dietaryRestrictions: [],
-            favoriteItems: [],
-            dislikedItems: [],
-            spicyPreference: 'medium'
-        };
-
-        res.json(preferences);
-    } catch (error) {
-        console.error('Error fetching preferences:', error);
-        res.status(500).json({ error: 'Failed to fetch preferences' });
-    }
-});
-
-/**
- * PUT /api/user/preferences/:userId
- * Update user preferences
- */
-app.put('/api/user/preferences/:userId', (req, res) => {
-    try {
-        const { userId } = req.params;
-        const updates = req.body;
-
-        const data = loadData();
-        if (!data.userPreferences) data.userPreferences = {};
-
-        // Merge preferences
-        data.userPreferences[userId] = {
-            ...data.userPreferences[userId],
-            ...updates
-        };
-
-        if (saveData(data)) {
-            res.json({
-                success: true,
-                message: 'Preferences updated',
-                preferences: data.userPreferences[userId]
-            });
-        } else {
-            res.status(500).json({ error: 'Failed to update preferences' });
-        }
-    } catch (error) {
-        console.error('Error updating preferences:', error);
-        res.status(500).json({ error: 'Failed to update preferences' });
-    }
-});
+// User preferences endpoints removed
 
 // Recommendations endpoints removed
 

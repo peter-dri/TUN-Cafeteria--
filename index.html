@@ -100,12 +100,7 @@
 
         <!-- Recommendations removed -->
 
-        <!-- Preferences Button -->
-        <div style="text-align: center; margin: 2rem 0;">
-            <button id="preferencesBtn" class="btn btn-secondary">
-                ⚙️ <span data-en="Set Food Preferences" data-sw="Weka Mapendeleo">Set Food Preferences</span>
-            </button>
-        </div>
+        <!-- Preferences removed -->
 
         <section class="menu-section">
             <h2 data-en="🌅 Breakfast" data-sw="🌅 Kifungua Kinywa">🌅 Breakfast</h2>
@@ -227,18 +222,7 @@
         </div>
     </footer>
 
-    <!-- Preferences Modal -->
-    <div id="preferencesModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Food Preferences</h3>
-                <button id="closePreferencesBtn" class="close">&times;</button>
-            </div>
-            <div id="preferencesContent" class="cart-items">
-                <!-- Preferences content will be dynamically inserted -->
-            </div>
-        </div>
-    </div>
+    <!-- Preferences removed -->
 
     <!-- Scripts -->
     <script src="modules/userProfile.js"></script>
@@ -407,26 +391,7 @@
             // Close payment button
             document.getElementById('closePaymentBtn').addEventListener('click', closePayment);
 
-            // Close preferences button
-            document.getElementById('closePreferencesBtn').addEventListener('click', () => {
-                closePreferences();
-            });
-
-
-                // Preferences modal helpers (simple show/hide)
-                function showPreferences() {
-                    const modal = document.getElementById('preferencesModal');
-                    if (modal) modal.style.display = 'flex';
-                }
-
-                function closePreferences() {
-                    const modal = document.getElementById('preferencesModal');
-                    if (modal) modal.style.display = 'none';
-                }
-            // Preferences button
-            document.getElementById('preferencesBtn').addEventListener('click', () => {
-                showPreferences();
-            });
+            // Preferences removed
 
             // Filter controls
             document.getElementById('menuSearch').addEventListener('input', applyFilters);
