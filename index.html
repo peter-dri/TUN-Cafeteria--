@@ -32,9 +32,6 @@
         <div class="container">
             <h2 data-en="Welcome to Tharaka University Cafeteria" data-sw="Karibu Mkahawa wa Chuo Kikuu cha Tharaka">Welcome to Tharaka University Cafeteria</h2>
             <p data-en="Fresh meals, great prices, quick service" data-sw="Chakula safi, bei nzuri, huduma ya haraka">Fresh meals, great prices, quick service</p>
-            <button id="refreshMenuBtn" class="btn btn-secondary" style="margin-top: 1rem;">
-                <span data-en="🔄 Refresh Menu" data-sw="🔄 Onyesha Menyu">🔄 Refresh Menu</span>
-            </button>
         </div>
     </section>
 
@@ -400,20 +397,6 @@
             CartModule.init();
             startAutoRefresh();
 
-            // Manual refresh button
-            document.getElementById('refreshMenuBtn').addEventListener('click', async () => {
-                const btn = document.getElementById('refreshMenuBtn');
-                btn.textContent = '⏳ Refreshing...';
-                btn.disabled = true;
-                
-                await loadData();
-                
-                btn.textContent = '✓ Menu Updated!';
-                setTimeout(() => {
-                    btn.textContent = '🔄 Refresh Menu';
-                    btn.disabled = false;
-                }, 2000);
-            });
 
             // Cart button
             document.getElementById('cartBtn').addEventListener('click', () => {
