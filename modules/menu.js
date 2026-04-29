@@ -51,9 +51,6 @@ const MenuModule = (() => {
                 <button id="add-btn-${item.id}" class="btn btn-primary btn-sm">
                     Add to Cart
                 </button>
-                <button id="quickorder-btn-${item.id}" class="btn btn-secondary btn-sm">
-                    Quick Order
-                </button>
             </div>
         `;
 
@@ -64,19 +61,7 @@ const MenuModule = (() => {
             CartModule.add(item.id, item.name, item.price, item.available);
         });
 
-        // Quick Order: add item and open cart modal for fast checkout
-        const quickBtn = card.querySelector(`#quickorder-btn-${item.id}`);
-        quickBtn.addEventListener('click', () => {
-            console.log('Quick Order clicked for item:', item.id);
-            CartModule.add(item.id, item.name, item.price, item.available);
-            // open cart modal
-            if (typeof CartModule.show === 'function') {
-                CartModule.show();
-            } else {
-                const modal = document.getElementById('cartModal');
-                if (modal) modal.style.display = 'flex';
-            }
-        });
+        // Note: Quick Order button intentionally removed for Student UI.
 
         return card;
     }

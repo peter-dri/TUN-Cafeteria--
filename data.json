@@ -5,7 +5,7 @@
         "id": 1,
         "name": "Mandazi",
         "price": 20,
-        "available": 35,
+        "available": 59,
         "unit": "pieces",
         "category": "breakfast"
       },
@@ -42,6 +42,13 @@
         "available": 33,
         "unit": "plates",
         "category": "lunch"
+      },
+      {
+        "id": 12,
+        "name": "Githeri",
+        "price": 20,
+        "available": 11,
+        "unit": "plates"
       }
     ],
     "snacks": [
@@ -63,31 +70,29 @@
       }
     ]
   },
-  "userPreferences": {},
-  "recommendationMetrics": {
-    "totalRecommendationsShown": 0,
-    "totalClicks": 0,
-    "totalOrders": 0,
-    "byStrategy": {
-      "collaborative": {
-        "shown": 0,
-        "clicked": 0,
-        "ordered": 0
-      },
-      "contentBased": {
-        "shown": 0,
-        "clicked": 0,
-        "ordered": 0
-      },
-      "popularity": {
-        "shown": 0,
-        "clicked": 0,
-        "ordered": 0
-      }
-    },
-    "topRecommendedItems": []
-  },
+  "orderCounter": 1043,
   "orderHistory": [
+    {
+      "id": 1777454820334,
+      "orderNumber": "TUC-1043",
+      "timestamp": "4/29/2026, 9:27:00 AM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 35,
+          "price": 20,
+          "total": 700
+        }
+      ],
+      "total": 700,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0741179808",
+      "paymentStatus": "Pending Verification",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "4/29/2026, 9:27:00 AM",
+      "notes": []
+    },
     {
       "id": 1774261647182,
       "orderNumber": "TUC-1042",
@@ -994,29 +999,5 @@
       "paymentStatus": "Paid"
     }
   ],
-  "orderCounter": 1042,
-  "reviews": {},
-  "adminAccounts": [
-    {
-      "id": 1,
-      "username": "admin",
-      "password": "admin123",
-      "role": "Super Admin",
-      "active": true
-    },
-    {
-      "id": 2,
-      "username": "manager",
-      "password": "manager123",
-      "role": "Manager",
-      "active": true
-    },
-    {
-      "id": 3,
-      "username": "PK",
-      "password": "1234",
-      "role": "Staff",
-      "active": true
-    }
-  ]
+  "userPreferences": {}
 }

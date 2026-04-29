@@ -11,7 +11,6 @@ require('dotenv').config();
 // Core server modules used by the JSON-backed API
 const InventoryManager = require('./modules/inventory');
 const AnalyticsManager = require('./modules/analytics');
-const LoyaltyManager = require('./modules/loyalty');
 const RoleManager = require('./modules/roles');
 
 const app = express();
@@ -377,12 +376,7 @@ app.post('/api/orders', (req, res) => {
         // Add order to history
         data.orderHistory.unshift(newOrder);
 
-        // Award loyalty points if phone number and payment confirmed
-        if (mpesaPhone && newOrder.paymentStatus === 'Paid') {
-            const loyaltyResult = LoyaltyManager.awardPoints(data, mpesaPhone, total, orderNumber);
-            newOrder.loyaltyPoints = loyaltyResult.pointsAwarded;
-            console.log(`💎 ${loyaltyResult.message}`);
-        }
+        // Loyalty awarding removed
 
         // Save data
         if (saveData(data)) {
@@ -1261,96 +1255,7 @@ app.get('/api/admin/analytics/report', authenticateToken, (req, res) => {
     }
 });
 
-// ============= LOYALTY POINTS ENDPOINTS =============
-
-/**
- * GET /api/loyalty/:phone
- * Get customer loyalty info
- */
-app.get('/api/loyalty/:phone', (req, res) => {
-    try {
-        const { phone } = req.params;
-        const data = loadData();
-        const summary = LoyaltyManager.getCustomerSummary(data, phone);
-        res.json({
-            success: true,
-            loyalty: summary
-        });
-    } catch (error) {
-        console.error('Error getting loyalty info:', error);
-        res.status(500).json({ error: 'Failed to get loyalty info' });
-    }
-});
-
-/**
- * POST /api/loyalty/:phone/redeem
- * Redeem loyalty points for discount
- */
-app.post('/api/loyalty/:phone/redeem', (req, res) => {
-    try {
-        const { phone } = req.params;
-        const { points, orderId } = req.body;
-
-        if (!points || !orderId) {
-            return res.status(400).json({ error: 'Points and orderId are required' });
-        }
-
-        const data = loadData();
-        const result = LoyaltyManager.redeemPoints(data, phone, points, orderId);
-
-        if (result.success) {
-            saveData(data);
-            res.json({ success: true, ...result });
-        } else {
-            res.status(400).json({ error: result.error });
-        }
-    } catch (error) {
-        console.error('Error redeeming points:', error);
-        res.status(500).json({ error: 'Failed to redeem points' });
-    }
-});
-
-/**
- * GET /api/admin/loyalty/top
- * Get top loyalty customers (ADMIN ONLY)
- */
-app.get('/api/admin/loyalty/top', authenticateToken, (req, res) => {
-    try {
-        const limit = parseInt(req.query.limit) || 10;
-        const data = loadData();
-        const topCustomers = LoyaltyManager.getTopCustomers(data, limit);
-        res.json({
-            success: true,
-            topCustomers
-        });
-    } catch (error) {
-        console.error('Error getting top customers:', error);
-        res.status(500).json({ error: 'Failed to get top customers' });
-    }
-});
-
-/**
- * POST /api/admin/loyalty/:phone/reset
- * Reset customer loyalty points (ADMIN ONLY)
- */
-app.post('/api/admin/loyalty/:phone/reset', authenticateToken, (req, res) => {
-    try {
-        const { phone } = req.params;
-        const data = loadData();
-        const result = LoyaltyManager.resetPoints(data, phone);
-
-        if (result.success) {
-            saveData(data);
-            res.json(result);
-            RoleManager.logActivity(data, req.user.username, 'reset_loyalty_points', { phone });
-        } else {
-            res.status(400).json(result);
-        }
-    } catch (error) {
-        console.error('Error resetting loyalty:', error);
-        res.status(500).json({ error: 'Failed to reset loyalty' });
-    }
-});
+// Loyalty endpoints removed
 
 // ============= ADMIN ROLE MANAGEMENT ENDPOINTS =============
 
