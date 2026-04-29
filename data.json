@@ -88,7 +88,7 @@
       "total": 700,
       "paymentMethod": "mpesa",
       "mpesaPhone": "0741179808",
-      "paymentStatus": "Pending Verification",
+      "paymentStatus": "Paid",
       "orderStatus": "Received",
       "lastStatusUpdate": "4/29/2026, 9:27:00 AM",
       "notes": []

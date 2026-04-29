@@ -6,7 +6,10 @@ const MenuModule = (() => {
         menuData = menu;
         renderCategory('breakfast', menu.breakfast);
         renderCategory('lunch', menu.lunch);
-        renderCategory('snacks', menu.snacks);
+
+        if (window.OrderingHoursModule && typeof OrderingHoursModule.refresh === 'function') {
+            OrderingHoursModule.refresh();
+        }
     }
 
     function renderCategory(category, items) {

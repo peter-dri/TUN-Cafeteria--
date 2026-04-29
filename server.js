@@ -17,6 +17,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 const DATA_FILE = path.join(__dirname, 'data.json');
+let dataCache = null;
+let dataCacheMtimeMs = 0;
 
 // ============= SECURITY MIDDLEWARE =============
 
@@ -43,6 +45,9 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
+// Running behind reverse proxies (e.g. Codespaces/NGINX) should trust first proxy hop.
+app.set('trust proxy', 1);
+
 // CORS
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' ? 'your-domain.com' : '*',
@@ -54,7 +59,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Static files
-app.use(express.static('.'))
+app.use(express.static('.', {
+    etag: true,
+    maxAge: '1h'
+}));
 
 // ============= AUTHENTICATION MIDDLEWARE =============
 
@@ -79,19 +87,47 @@ function authenticateToken(req, res, next) {
 
 function loadData() {
     try {
-        if (fs.existsSync(DATA_FILE)) {
-            const content = fs.readFileSync(DATA_FILE, 'utf8');
-            return JSON.parse(content);
+        if (!fs.existsSync(DATA_FILE)) {
+            if (!dataCache) {
+                dataCache = getDefaultData();
+                dataCacheMtimeMs = 0;
+            }
+            return dataCache;
         }
+
+        const fileStats = fs.statSync(DATA_FILE);
+
+        // Serve from cache when file has not changed.
+        if (dataCache && fileStats.mtimeMs === dataCacheMtimeMs) {
+            return dataCache;
+        }
+
+        const content = fs.readFileSync(DATA_FILE, 'utf8');
+        dataCache = JSON.parse(content);
+        dataCacheMtimeMs = fileStats.mtimeMs;
+        return dataCache;
     } catch (error) {
         console.error('Error loading data:', error);
     }
-    return getDefaultData();
+
+    if (dataCache) {
+        return dataCache;
+    }
+
+    dataCache = getDefaultData();
+    return dataCache;
 }
 
 function saveData(data) {
     try {
         fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
+
+        // Keep in-memory cache coherent after writes.
+        dataCache = data;
+        if (fs.existsSync(DATA_FILE)) {
+            dataCacheMtimeMs = fs.statSync(DATA_FILE).mtimeMs;
+        }
+
         return true;
     } catch (error) {
         console.error('Error saving data:', error);
@@ -108,6 +144,12 @@ function getDefaultData() {
         reviews: {},
         adminAccounts: []
     };
+}
+
+function clampNumber(value, min, max, fallback) {
+    const parsed = parseInt(value, 10);
+    if (Number.isNaN(parsed)) return fallback;
+    return Math.min(Math.max(parsed, min), max);
 }
 
 // ============= VALIDATION UTILITIES =============
@@ -218,20 +260,49 @@ app.post('/api/admin/login', (req, res) => {
 // ============= DATA ENDPOINTS (CORE) =============
 
 /**
+ * GET /api/menu-state
+ * Lightweight student payload: menu + counter only
+ */
+app.get('/api/menu-state', (req, res) => {
+    try {
+        const data = loadData();
+        res.json({
+            foodData: data.foodData,
+            orderCounter: data.orderCounter
+        });
+    } catch (error) {
+        console.error('Error fetching menu state:', error);
+        res.status(500).json({ error: 'Failed to fetch menu state' });
+    }
+});
+
+/**
  * GET /api/data
  * Get all cafeteria data (menu, orders, preferences, etc.)
  */
 app.get('/api/data', (req, res) => {
     try {
         const data = loadData();
+        const includeOrderHistory = req.query.includeOrderHistory !== 'false';
+        const includeUserPreferences = req.query.includeUserPreferences !== 'false';
+        const orderLimit = clampNumber(req.query.orderLimit, 0, 5000, 0);
         
-        // Return essential data
-        res.json({
+        const payload = {
             foodData: data.foodData,
-            orderCounter: data.orderCounter,
-            orderHistory: data.orderHistory,
-            userPreferences: data.userPreferences || {}
-        });
+            orderCounter: data.orderCounter
+        };
+
+        if (includeOrderHistory) {
+            payload.orderHistory = orderLimit > 0
+                ? (data.orderHistory || []).slice(0, orderLimit)
+                : (data.orderHistory || []);
+        }
+
+        if (includeUserPreferences) {
+            payload.userPreferences = data.userPreferences || {};
+        }
+
+        res.json(payload);
     } catch (error) {
         console.error('Error fetching data:', error);
         res.status(500).json({ error: 'Failed to fetch data' });
@@ -278,6 +349,21 @@ app.post('/api/data', authenticateToken, (req, res) => {
 app.get('/api/admin/data', authenticateToken, (req, res) => {
     try {
         const data = loadData();
+        const includeOrderHistory = req.query.includeOrderHistory !== 'false';
+        const orderLimit = clampNumber(req.query.orderLimit, 0, 10000, 0);
+
+        if (!includeOrderHistory) {
+            const { orderHistory, ...rest } = data;
+            return res.json(rest);
+        }
+
+        if (orderLimit > 0) {
+            return res.json({
+                ...data,
+                orderHistory: (data.orderHistory || []).slice(0, orderLimit)
+            });
+        }
+
         res.json(data);
     } catch (error) {
         console.error('Error fetching admin data:', error);
@@ -803,9 +889,11 @@ app.get('/api/mpesa/session/:checkoutRequestId', authenticateToken, (req, res) =
  */
 app.get('/api/orders', authenticateToken, (req, res) => {
     try {
-        const { search, status, paymentMethod, limit } = req.query;
+        const { search, status, paymentMethod } = req.query;
+        const page = clampNumber(req.query.page, 1, 100000, 1);
+        const limit = clampNumber(req.query.limit, 1, 200, 50);
         const data = loadData();
-        let orders = [...data.orderHistory];
+        let orders = data.orderHistory || [];
 
         // Filter by search term
         if (search) {
@@ -825,14 +913,17 @@ app.get('/api/orders', authenticateToken, (req, res) => {
             orders = orders.filter(o => o.paymentMethod === paymentMethod);
         }
 
-        // Apply limit
-        const maxLimit = Math.min(parseInt(limit) || 50, 200);
-        orders = orders.slice(0, maxLimit);
+        const totalFiltered = orders.length;
+        const start = (page - 1) * limit;
+        const paginatedOrders = orders.slice(start, start + limit);
 
         res.json({
-            total: data.orderHistory.length,
-            returned: orders.length,
-            orders
+            total: (data.orderHistory || []).length,
+            totalFiltered,
+            page,
+            limit,
+            returned: paginatedOrders.length,
+            orders: paginatedOrders
         });
     } catch (error) {
         console.error('Error fetching orders:', error);
