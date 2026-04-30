@@ -7,14 +7,14 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const mpesaModule = require('./modules/mpesa');
 
-<<<<<<< HEAD
+
+require('dotenv').config();
+
 // Import new modules
 const InventoryManager = require('./modules/inventory');
 const AnalyticsManager = require('./modules/analytics');
 const LoyaltyManager = require('./modules/loyalty');
 const RoleManager = require('./modules/roles');
-=======
-require('dotenv').config();
 
 // Import SQLite database connection and models
 const dbConnection = require('./database/sqlite-connection');
@@ -33,7 +33,6 @@ const recommendationsModule = require('./modules/recommendations');
 const userProfileModule = require('./modules/userProfile');
 const recommendationUIModule = require('./modules/recommendationUI');
 const recommendationAnalyticsModule = require('./modules/recommendationAnalytics');
->>>>>>> f8f8213b5ba510b7bb4bb8290c3d8637abeb125e
 
 const app = express();
 const PORT = process.env.PORT || 3000;
