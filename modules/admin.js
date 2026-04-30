@@ -214,11 +214,19 @@ const AdminModule = (() => {
             return;
         }
 
-        const method = document.getElementById('posPaymentMethod').value;
-        const mpesaPhone = method === 'mpesa' ? document.getElementById('posMpesaPhone').value : null;
+        const method = 'mpesa';
+        const customerNameInput = document.getElementById('posCustomerName');
+        const mpesaPhoneInput = document.getElementById('posMpesaPhone');
+        const customerName = customerNameInput ? customerNameInput.value.trim() : '';
+        const mpesaPhone = mpesaPhoneInput ? mpesaPhoneInput.value.trim() : '';
 
-        if (method === 'mpesa' && (!mpesaPhone || mpesaPhone.trim() === '')) {
-            alert('Please enter customer phone number for M-Pesa payment');
+        if (!customerName) {
+            alert('Please enter the student name');
+            return;
+        }
+
+        if (!mpesaPhone) {
+            alert('Please enter the M-Pesa number');
             return;
         }
 
@@ -241,7 +249,8 @@ const AdminModule = (() => {
                     items: orderItems,
                     total,
                     paymentMethod: method,
-                    mpesaPhone
+                    mpesaPhone,
+                    customerName
                 })
             });
 
@@ -295,6 +304,8 @@ const AdminModule = (() => {
 
                 posCart = [];
                 renderPOSCart();
+                if (customerNameInput) customerNameInput.value = '';
+                if (mpesaPhoneInput) mpesaPhoneInput.value = '';
                 await loadData();
                 renderPOSMenu('posMenu');
             } else {
@@ -359,22 +370,6 @@ const AdminModule = (() => {
                 deleteBtn.addEventListener('click', () => AdminModule.deleteItem(item.id));
 
                 actions.appendChild(inputQty);
-                // Add Quick / POS button to send item to Quick Order (POS)
-                const posBtn = document.createElement('button');
-                posBtn.className = 'btn btn-info btn-sm';
-                posBtn.style.marginLeft = '0.5rem';
-                posBtn.textContent = 'Add to POS';
-                posBtn.addEventListener('click', () => {
-                    try {
-                        // Use AdminModule's addToPOSCart exposed method
-                        AdminModule.addToPOSCart(item.id, item.name, item.price);
-                        // Provide visual feedback
-                        alert(`Added ${item.name} to POS cart`);
-                    } catch (e) {
-                        alert('Failed to add to POS: ' + e.message);
-                    }
-                });
-                actions.appendChild(posBtn);
                 actions.appendChild(updateBtn);
                 actions.appendChild(deleteBtn);
 
@@ -1202,50 +1197,7 @@ const AdminModule = (() => {
         }
     }
 
-    // ===== LOYALTY POINTS MANAGEMENT =====
-
-    async function renderLoyalty() {
-        const container = document.getElementById('loyaltyResult');
-        if (!container) return;
-        
-        container.innerHTML = '<div class="admin-spinner"></div>';
-        try {
-            const token = AuthModule.getToken();
-            const response = await fetch('/api/admin/loyalty/top', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await response.json();
-            const customers = data.topCustomers || [];
-
-            let html = '<table style="width: 100%; border-collapse: collapse;">';
-            html += '<tr><th>Phone</th><th>Points</th><th>Tier</th><th>Total Spent</th><th>Orders</th></tr>';
-            customers.forEach(c => {
-                html += `<tr style="border-bottom: 1px solid #E2E8F0;">
-                    <td>${c.phone}</td>
-                    <td><strong>${c.points}</strong></td>
-                    <td>${c.tier}</td>
-                    <td>KSh ${c.totalSpent}</td>
-                    <td>${c.orders}</td>
-                </tr>`;
-            });
-            html += '</table>';
-            
-            container.innerHTML = html;
-        } catch (error) {
-            container.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
-        }
-    }
-
-    async function renderTopCustomers() {
-        const container = document.getElementById('topCustomersList');
-        if (!container) return;
-        
-        try {
-            await renderLoyalty();
-        } catch (error) {
-            console.error('Error rendering top customers:', error);
-        }
-    }
+    // Loyalty management removed from admin UI
 
     // ===== ROLE & ACCESS MANAGEMENT =====
 
@@ -1345,8 +1297,7 @@ const AdminModule = (() => {
         clearOrderSearch,
         printReceipt,
         verifyPayment,
-        renderLoyalty,
-        renderTopCustomers,
+        
         renderRoles,
         renderActivityLog
     };

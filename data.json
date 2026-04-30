@@ -5,7 +5,7 @@
         "id": 1,
         "name": "Mandazi",
         "price": 20,
-        "available": 59,
+        "available": 53,
         "unit": "pieces",
         "category": "breakfast"
       },
@@ -39,7 +39,7 @@
         "id": 6,
         "name": "Rice & Chicken",
         "price": 150,
-        "available": 33,
+        "available": 27,
         "unit": "plates",
         "category": "lunch"
       },
@@ -70,8 +70,113 @@
       }
     ]
   },
-  "orderCounter": 1043,
+  "orderCounter": 1048,
   "orderHistory": [
+    {
+      "id": 1777540891022,
+      "orderNumber": "TUC-1048",
+      "timestamp": "4/30/2026, 9:21:31 AM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 3,
+          "price": 20,
+          "total": 60
+        }
+      ],
+      "total": 60,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0741179808",
+      "paymentStatus": "Pending Verification",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "4/30/2026, 9:21:31 AM",
+      "notes": []
+    },
+    {
+      "id": 1777540883284,
+      "orderNumber": "TUC-1047",
+      "timestamp": "4/30/2026, 9:21:23 AM",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mandazi",
+          "quantity": 3,
+          "price": 20,
+          "total": 60
+        }
+      ],
+      "total": 60,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0741179808",
+      "paymentStatus": "Pending Verification",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "4/30/2026, 9:21:23 AM",
+      "notes": []
+    },
+    {
+      "id": 1777461954248,
+      "orderNumber": "TUC-1046",
+      "timestamp": "4/29/2026, 11:25:54 AM",
+      "items": [
+        {
+          "id": 6,
+          "name": "Rice & Chicken",
+          "quantity": 2,
+          "price": 150,
+          "total": 300
+        }
+      ],
+      "total": 300,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0741179808",
+      "paymentStatus": "Paid",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "4/29/2026, 11:25:54 AM",
+      "notes": []
+    },
+    {
+      "id": 1777461953694,
+      "orderNumber": "TUC-1045",
+      "timestamp": "4/29/2026, 11:25:53 AM",
+      "items": [
+        {
+          "id": 6,
+          "name": "Rice & Chicken",
+          "quantity": 2,
+          "price": 150,
+          "total": 300
+        }
+      ],
+      "total": 300,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0741179808",
+      "paymentStatus": "Paid",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "4/29/2026, 11:25:53 AM",
+      "notes": []
+    },
+    {
+      "id": 1777461952558,
+      "orderNumber": "TUC-1044",
+      "timestamp": "4/29/2026, 11:25:52 AM",
+      "items": [
+        {
+          "id": 6,
+          "name": "Rice & Chicken",
+          "quantity": 2,
+          "price": 150,
+          "total": 300
+        }
+      ],
+      "total": 300,
+      "paymentMethod": "mpesa",
+      "mpesaPhone": "0741179808",
+      "paymentStatus": "Paid",
+      "orderStatus": "Received",
+      "lastStatusUpdate": "4/29/2026, 11:25:52 AM",
+      "notes": []
+    },
     {
       "id": 1777454820334,
       "orderNumber": "TUC-1043",
@@ -220,7 +325,7 @@
       "total": 445,
       "paymentMethod": "mpesa",
       "mpesaPhone": "0741179808",
-      "paymentStatus": "Pending Verification",
+      "paymentStatus": "Paid",
       "orderStatus": "Received",
       "lastStatusUpdate": "3/17/2026, 1:24:23 PM",
       "notes": []
@@ -241,7 +346,7 @@
       "total": 20,
       "paymentMethod": "mpesa",
       "mpesaPhone": "0110725771",
-      "paymentStatus": "Pending Verification",
+      "paymentStatus": "Paid",
       "orderStatus": "Received",
       "lastStatusUpdate": "2/10/2026, 4:27:50 PM",
       "notes": []
@@ -262,7 +367,7 @@
       "total": 20,
       "paymentMethod": "mpesa",
       "mpesaPhone": "0110725771",
-      "paymentStatus": "Pending Verification",
+      "paymentStatus": "Paid",
       "orderStatus": "Received",
       "lastStatusUpdate": "2/10/2026, 4:27:49 PM",
       "notes": []
@@ -283,7 +388,7 @@
       "total": 20,
       "paymentMethod": "mpesa",
       "mpesaPhone": "0110725771",
-      "paymentStatus": "Pending Verification",
+      "paymentStatus": "Paid",
       "orderStatus": "Received",
       "lastStatusUpdate": "2/10/2026, 4:27:49 PM",
       "notes": []
@@ -304,7 +409,7 @@
       "total": 20,
       "paymentMethod": "mpesa",
       "mpesaPhone": "0110725771",
-      "paymentStatus": "Pending Verification",
+      "paymentStatus": "Paid",
       "orderStatus": "Received",
       "lastStatusUpdate": "2/10/2026, 4:27:49 PM",
       "notes": []
@@ -325,7 +430,7 @@
       "total": 20,
       "paymentMethod": "mpesa",
       "mpesaPhone": "0110725771",
-      "paymentStatus": "Pending Verification",
+      "paymentStatus": "Paid",
       "orderStatus": "Received",
       "lastStatusUpdate": "2/10/2026, 4:27:49 PM",
       "notes": []
@@ -346,7 +451,7 @@
       "total": 20,
       "paymentMethod": "mpesa",
       "mpesaPhone": "0110725771",
-      "paymentStatus": "Pending Verification",
+      "paymentStatus": "Paid",
       "orderStatus": "Received",
       "lastStatusUpdate": "2/10/2026, 4:27:48 PM",
       "notes": []
@@ -367,7 +472,7 @@
       "total": 20,
       "paymentMethod": "mpesa",
       "mpesaPhone": "0110725771",
-      "paymentStatus": "Pending Verification",
+      "paymentStatus": "Paid",
       "orderStatus": "Received",
       "lastStatusUpdate": "2/10/2026, 4:27:45 PM",
       "notes": []
@@ -387,7 +492,7 @@
       ],
       "total": 20,
       "paymentMethod": "cash",
-      "paymentStatus": "Pending Confirmation",
+      "paymentStatus": "Paid",
       "orderStatus": "Received",
       "lastStatusUpdate": "2/10/2026, 3:44:17 PM",
       "notes": []
@@ -407,7 +512,7 @@
       ],
       "total": 20,
       "paymentMethod": "cash",
-      "paymentStatus": "Pending Confirmation",
+      "paymentStatus": "Paid",
       "orderStatus": "Received",
       "lastStatusUpdate": "2/9/2026, 8:51:24 PM",
       "notes": []
@@ -428,7 +533,7 @@
       "total": 20,
       "paymentMethod": "mpesa",
       "mpesaPhone": "0110725771",
-      "paymentStatus": "Pending Verification",
+      "paymentStatus": "Paid",
       "orderStatus": "Received",
       "lastStatusUpdate": "2/9/2026, 8:50:08 PM",
       "notes": []

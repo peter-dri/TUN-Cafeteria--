@@ -379,7 +379,7 @@ app.get('/api/admin/data', authenticateToken, (req, res) => {
  */
 app.post('/api/orders', (req, res) => {
     try {
-        const { items, total, paymentMethod, mpesaPhone } = req.body;
+        const { items, total, paymentMethod, mpesaPhone, customerName } = req.body;
 
         // Validate order data
         const validationErrors = validateOrderData(items, total, paymentMethod, mpesaPhone);
@@ -449,6 +449,7 @@ app.post('/api/orders', (req, res) => {
             id: orderId,
             orderNumber,
             timestamp,
+            customerName: customerName ? String(customerName).trim() : undefined,
             items,
             total,
             paymentMethod,

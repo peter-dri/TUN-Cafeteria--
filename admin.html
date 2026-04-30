@@ -68,6 +68,12 @@
                     
                     <!-- Controls and Actions -->
                     <div class="admin-navbar-controls">
+                        <button id="mobileNavToggle" class="admin-mobile-nav-toggle" aria-label="Open navigation" aria-controls="adminSidebar" aria-expanded="false" type="button">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+                        
                         <!-- Theme Toggle -->
                         <button id="themeToggle" class="admin-navbar-btn" title="Toggle Dark Mode">
                             <span>🌙</span>
@@ -92,16 +98,12 @@
         </nav>
 
         <div>
+            <div id="adminSidebarBackdrop" class="admin-sidebar-backdrop" hidden></div>
             <!-- Modern Sidebar -->
-            <aside class="admin-sidebar">
+            <aside class="admin-sidebar" id="adminSidebar">
                 <div class="admin-sidebar-inner">
                     <h2 class="admin-sidebar-title">Navigation</h2>
                     <nav class="admin-sidebar-nav">
-                        <button class="nav-btn admin-nav-btn" data-tab="pos" data-en="🛒 Quick Order" data-sw="🛒 Oda Haraka">
-                            <span class="admin-nav-icon">🛒</span>
-                            <span>Quick Order</span>
-                        </button>
-                        
                         <button class="nav-btn admin-nav-btn" data-tab="inventory" data-en="📦 Inventory" data-sw="📦 Hesabu">
                             <span class="admin-nav-icon">📦</span>
                             <span>Inventory</span>
@@ -110,6 +112,11 @@
                         <button class="nav-btn admin-nav-btn" data-tab="orders" data-en="📋 Orders" data-sw="📋 Maagizo">
                             <span class="admin-nav-icon">📋</span>
                             <span>Orders</span>
+                        </button>
+
+                        <button class="nav-btn admin-nav-btn" data-tab="quickOrder" data-en="⚡ Quick Order" data-sw="⚡ Agizo la Haraka">
+                            <span class="admin-nav-icon">⚡</span>
+                            <span>Quick Order</span>
                         </button>
                         
                         <button class="nav-btn admin-nav-btn" data-tab="add" data-en="➕ Add Food" data-sw="➕ Ongeza Chakula">
@@ -123,11 +130,6 @@
                         </button>
                         
                         <!-- AI Recommendations removed -->
-                        
-                        <button class="nav-btn admin-nav-btn" data-tab="loyalty" data-en="💎 Loyalty Points" data-sw="💎 Pointi za Sadaka">
-                            <span class="admin-nav-icon">💎</span>
-                            <span>Loyalty Points</span>
-                        </button>
                         
                         <button class="nav-btn admin-nav-btn" id="rolesNavBtn" data-tab="roles" data-en="🔐 Roles & Access" data-sw="🔐 Majukumu" style="display: none;">
                             <span class="admin-nav-icon">🔐</span>
@@ -144,68 +146,8 @@
 
             <!-- Main Content -->
             <main class="admin-main">
-                <!-- POS / Quick Order Tab -->
-                <div id="posTab" class="admin-tab-panel active">
-                    <div>
-                        <h2 class="admin-section-title">Quick Order (Point of Sale)</h2>
-                        <p class="admin-section-description">Create orders for customers who need assistance</p>
-                    </div>
-                    
-                    <div class="admin-grid">
-                        <!-- Menu Items -->
-                        <div>
-                            <div class="admin-card">
-                                <h3 class="admin-card-title">
-                                    <span class="admin-card-icon">🍽️</span>
-                                    Menu Items
-                                </h3>
-                                <div id="posMenu" class="admin-menu-grid"></div>
-                            </div>
-                        </div>
-
-                        <!-- Current Order Card -->
-                        <div>
-                            <div class="admin-card admin-sticky-card">
-                                <h3 class="admin-card-title">
-                                    <span class="admin-card-icon">🛒</span>
-                                    Current Order
-                                </h3>
-                                
-                                <div id="posCart" class="admin-cart"></div>
-                                
-                                <div class="admin-total-section">
-                                    <div class="admin-total-row">
-                                        <span class="admin-total-label">Total:</span>
-                                        <span class="admin-total-amount">KSh <span id="posTotal">0</span></span>
-                                    </div>
-                                    
-                                    <div class="admin-flex admin-flex-col admin-gap-2">
-                                        <div class="admin-input-group">
-                                            <label class="admin-form-label">Payment Method</label>
-                                            <select id="posPaymentMethod" class="admin-form-select admin-select">
-                                                <option value="cash">💵 Cash</option>
-                                                <option value="mpesa">📱 M-Pesa</option>
-                                            </select>
-                                        </div>
-
-                                        <div id="posMpesaSection" style="display: none;">
-                                            <label class="admin-form-label">Customer Phone</label>
-                                            <input type="tel" id="posMpesaPhone" placeholder="0712345678" class="admin-input">
-                                        </div>
-
-                                        <div class="admin-flex admin-flex-col admin-gap-1">
-                                            <button id="posPlaceOrder" class="admin-btn-submit">Place Order</button>
-                                            <button id="posClearOrder" class="admin-btn-secondary">Clear Order</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Inventory Tab -->
-                <div id="inventoryTab" class="admin-tab-panel">
+                <div id="inventoryTab" class="admin-tab-panel active">
                     <div>
                         <h2 class="admin-section-title">Inventory Management</h2>
                         <p class="admin-section-description">Manage your food items and stock levels</p>
@@ -259,6 +201,61 @@
                             All Orders
                         </h3>
                         <div id="ordersList" class="admin-flex admin-flex-col admin-gap-1"></div>
+                    </div>
+                </div>
+
+                <!-- Quick Order Tab -->
+                <div id="quickOrderTab" class="admin-tab-panel">
+                    <div>
+                        <h2 class="admin-section-title">Quick Order</h2>
+                        <p class="admin-section-description">Place an order for a student when they cannot complete it themselves. Enter the student name first, then their M-Pesa number. They will approve the prompt on their own phone with their PIN.</p>
+                    </div>
+
+                    <div class="admin-card">
+                        <h3 class="admin-card-title">
+                            <span class="admin-card-icon">⚡</span>
+                            Quick Order Menu
+                        </h3>
+                        <div id="posMenu"></div>
+                    </div>
+
+                    <div class="admin-card">
+                        <h3 class="admin-card-title">
+                            <span class="admin-card-icon">🛒</span>
+                            Current Order
+                        </h3>
+                        <div id="posCart"></div>
+
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #E2E8F0;">
+                            <div class="admin-form-row">
+                                <div class="admin-input-group">
+                                    <label class="admin-form-label">Student Name</label>
+                                    <input type="text" id="posCustomerName" class="admin-input" placeholder="Enter student name">
+                                </div>
+                                <div class="admin-input-group">
+                                    <label class="admin-form-label">M-Pesa Number</label>
+                                    <input type="tel" id="posMpesaPhone" class="admin-input" placeholder="2547XXXXXXXX">
+                                </div>
+                            </div>
+
+                            <div style="background: #EBF8FF; color: #2B6CB0; padding: 0.85rem 1rem; border-radius: 0.5rem; margin: 1rem 0; font-size: 0.9rem; line-height: 1.5;">
+                                Payment method is M-Pesa only for quick orders. The student will receive the STK prompt and enter their PIN on their phone.
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0; font-size: 1.1rem; font-weight: 700;">
+                                <span>Total</span>
+                                <span>KSh <span id="posTotal">0</span></span>
+                            </div>
+
+                            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                                <button id="posPlaceOrder" class="admin-btn-submit">Place Quick Order</button>
+                                <button id="posClearOrder" class="admin-btn-secondary" type="button">Clear Order</button>
+                            </div>
+
+                            <p style="margin-top: 1rem; color: #718096; font-size: 0.875rem; line-height: 1.5;">
+                                After you place the order, the student will receive an M-Pesa STK prompt and enter their PIN on their own phone to complete payment.
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -365,30 +362,7 @@
                         <div id="adminsList"></div>
                     </div>
 
-                    <!-- Loyalty Points Management Tab -->
-                    <div id="loyaltyTab" style="display: none;">
-                        <div class="admin-card">
-                            <h3 class="admin-card-title">
-                                <span class="admin-card-icon">💎</span>
-                                Loyalty Points Management
-                            </h3>
-                            
-                            <div style="margin-bottom: 1.5rem;">
-                                <label class="admin-form-label">Search Customer</label>
-                                <div style="display: flex; gap: 0.5rem;">
-                                    <input type="tel" id="loyaltyPhone" placeholder="Phone (0712345678)" class="admin-input" style="flex: 1;">
-                                    <button onclick="searchLoyaltyCustomer()" class="admin-btn-submit">Search</button>
-                                </div>
-                            </div>
-
-                            <div id="loyaltyResult"></div>
-                        </div>
-
-                        <div class="admin-card">
-                            <h3 class="admin-card-subtitle">Top Customers</h3>
-                            <div id="topCustomersList"></div>
-                        </div>
-                    </div>
+                    <!-- Loyalty Points removed per request -->
 
                     <!-- Roles & Access Tab -->
                     <div id="rolesTab" style="display: none;">
@@ -612,6 +586,26 @@
             });
         }
 
+        function setMobileSidebarOpen(open) {
+            const sidebar = document.getElementById('adminSidebar');
+            const backdrop = document.getElementById('adminSidebarBackdrop');
+            const toggle = document.getElementById('mobileNavToggle');
+
+            if (!sidebar || !backdrop || !toggle) return;
+
+            const isMobile = window.matchMedia('(max-width: 768px)').matches;
+            if (!isMobile) {
+                sidebar.classList.remove('is-open');
+                backdrop.hidden = true;
+                toggle.setAttribute('aria-expanded', 'false');
+                return;
+            }
+
+            sidebar.classList.toggle('is-open', open);
+            backdrop.hidden = !open;
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+
         function activateTab(tab) {
             if (!tab) return;
             resetNavStyles();
@@ -633,13 +627,13 @@
             }
 
             // render/refresh content for known panels
-            if (tab === 'pos') {
-                AdminModule.renderPOSMenu('posMenu');
-                AdminModule.renderPOSCart();
-            } else if (tab === 'inventory') {
+            if (tab === 'inventory') {
                 AdminModule.renderInventory('inventoryList');
             } else if (tab === 'orders') {
                 AdminModule.renderOrders('ordersList');
+            } else if (tab === 'quickOrder') {
+                AdminModule.renderPOSMenu('posMenu');
+                AdminModule.renderPOSCart();
             } else if (tab === 'analytics') {
                 AdminModule.renderAnalytics('analyticsContent');
             } else if (tab === 'admins') {
@@ -655,8 +649,25 @@
             btn.addEventListener('click', () => {
                 const tab = btn.dataset.tab;
                 activateTab(tab);
+                setMobileSidebarOpen(false);
             });
         });
+
+        const mobileNavToggle = document.getElementById('mobileNavToggle');
+        const adminSidebarBackdrop = document.getElementById('adminSidebarBackdrop');
+        if (mobileNavToggle) {
+            mobileNavToggle.addEventListener('click', () => {
+                const sidebar = document.getElementById('adminSidebar');
+                const isOpen = sidebar ? sidebar.classList.contains('is-open') : false;
+                setMobileSidebarOpen(!isOpen);
+            });
+        }
+
+        if (adminSidebarBackdrop) {
+            adminSidebarBackdrop.addEventListener('click', () => setMobileSidebarOpen(false));
+        }
+
+        window.addEventListener('resize', () => setMobileSidebarOpen(false));
 
         // Recommendation analytics removed
 
@@ -690,7 +701,6 @@
                     
                     // Refresh all relevant displays
                     AdminModule.renderInventory('inventoryList');
-                    AdminModule.renderPOSMenu('posMenu');
                     
                 } catch (error) {
                     console.error('Error adding food:', error);
@@ -722,17 +732,6 @@
                 }
             });
         }
-
-        // POS Payment method change
-        const posPaymentMethod = document.getElementById('posPaymentMethod');
-        if (posPaymentMethod) posPaymentMethod.addEventListener('change', (e) => {
-            const mpesaSection = document.getElementById('posMpesaSection');
-            if (e.target.value === 'mpesa') {
-                mpesaSection.style.display = 'block';
-            } else {
-                mpesaSection.style.display = 'none';
-            }
-        });
 
         // Modern POS Place Order with loading states
         const posPlaceBtn = document.getElementById('posPlaceOrder');
@@ -824,42 +823,7 @@
 
         switchLanguage(currentLang);
 
-        // Loyalty Search Function
-        function searchLoyaltyCustomer() {
-            const phone = document.getElementById('loyaltyPhone').value.trim();
-            if (!phone) {
-                alert('Please enter a phone number');
-                return;
-            }
-
-            fetch(`/api/loyalty/${phone}`)
-                .then(res => res.json())
-                .then(data => {
-                    const result = document.getElementById('loyaltyResult');
-                    if (data.success) {
-                        const loyalty = data.loyalty;
-                        const html = `
-                            <div class="admin-card" style="background: #F0FFF4; border-left: 4px solid #48BB78;">
-                                <h4 style="color: #22543D; margin-top: 0;">💎 ${loyalty.phone}</h4>
-                                <table style="width: 100%; font-size: 0.875rem;">
-                                    <tr><td><strong>Total Points:</strong></td><td>${loyalty.points}</td></tr>
-                                    <tr><td><strong>Tier:</strong></td><td>${loyalty.tier.tier}</td></tr>
-                                    <tr><td><strong>Total Spent:</strong></td><td>KSh ${loyalty.totalSpent}</td></tr>
-                                    <tr><td><strong>Order Count:</strong></td><td>${loyalty.orders}</td></tr>
-                                    <tr><td><strong>Member Since:</strong></td><td>${loyalty.joinedDate}</td></tr>
-                                    <tr><td><strong>Estimated Discount:</strong></td><td>KSh ${loyalty.estimatedDiscount}</td></tr>
-                                </table>
-                            </div>
-                        `;
-                        result.innerHTML = html;
-                    } else {
-                        result.innerHTML = `<div style="color: #C53030; padding: 1rem; background: #FED7D7; border-radius: 0.5rem;">No record found for this customer</div>`;
-                    }
-                })
-                .catch(err => {
-                    document.getElementById('loyaltyResult').innerHTML = `<div style="color: red;">Error: ${err.message}</div>`;
-                });
-        }
+        // Loyalty feature removed
 
         async function showDashboard() {
             const loginScreen = document.getElementById('loginScreen');
@@ -881,9 +845,10 @@
 
             await AdminModule.loadData();
 
-            // Activate last-viewed tab or default to pos
-            const last = localStorage.getItem('lastAdminTab') || 'pos';
-            activateTab(last);
+            // Activate last-viewed tab or default to inventory
+            const last = localStorage.getItem('lastAdminTab') || 'inventory';
+            const validTabs = ['inventory', 'orders', 'quickOrder', 'add', 'analytics', 'roles', 'admins'];
+            activateTab(validTabs.includes(last) ? last : 'inventory');
         }
     </script>
 </body>

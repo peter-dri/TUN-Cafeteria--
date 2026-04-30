@@ -27,7 +27,7 @@ const PaymentModule = (() => {
         console.log('Payment modal displayed successfully');
     }
 
-    async function processPayment(method, cart, total, mpesaPhone = null) {
+    async function processPayment(method, cart, total, mpesaPhone = null, customerName = '') {
         const orderItems = cart.map(item => ({
             id: item.id,
             name: item.name,
@@ -44,7 +44,8 @@ const PaymentModule = (() => {
                     items: orderItems,
                     total,
                     paymentMethod: method,
-                    mpesaPhone
+                    mpesaPhone,
+                    customerName
                 })
             });
 

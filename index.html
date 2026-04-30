@@ -97,20 +97,15 @@
                     Total: <strong>KSh <span id="paymentTotal">0</span></strong>
                 </div>
 
-                <!-- Payment Method Selection -->
-                <div class="form-group">
-                    <label>Select Payment Method</label>
-                    <select id="paymentMethod" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #CBD5E0; border-radius: 0.375rem; font-size: 1rem;">
-                        <option value="cash">Cash on Pickup</option>
-                        <option value="mpesa">M-Pesa</option>
-                    </select>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Enter Your Name</label>
+                    <input type="text" id="customerName" placeholder="e.g. John Doe" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #CBD5E0; border-radius: 0.375rem; font-size: 1rem;">
                 </div>
 
-                <!-- M-Pesa Phone Number (hidden by default) -->
-                <div id="mpesaSection" class="form-group" style="display: none; margin-top: 1rem;">
+                <div class="form-group" style="margin-top: 1rem;">
                     <label>M-Pesa Phone Number</label>
                     <input type="tel" id="mpesaPhone" placeholder="0712345678" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #CBD5E0; border-radius: 0.375rem; font-size: 1rem;">
-                    <p style="font-size: 0.875rem; color: #718096; margin-top: 0.5rem;">You will receive an M-Pesa prompt to complete payment</p>
+                    <p style="font-size: 0.875rem; color: #718096; margin-top: 0.5rem;">Payment method: M-Pesa only</p>
                 </div>
             </div>
             <div class="cart-footer">
@@ -326,32 +321,26 @@
                 closeCart();
             });
 
-            // Payment method change
-            document.getElementById('paymentMethod').addEventListener('change', (e) => {
-                const mpesaSection = document.getElementById('mpesaSection');
-                if (e.target.value === 'mpesa') {
-                    mpesaSection.style.display = 'block';
-                } else {
-                    mpesaSection.style.display = 'none';
-                }
-            });
-
             // Confirm payment and place order
             document.getElementById('confirmPaymentBtn').addEventListener('click', async () => {
                 const cart = CartModule.getItems();
                 const total = CartModule.getTotal();
-                const method = document.getElementById('paymentMethod').value;
-                const mpesaPhone = method === 'mpesa' ? document.getElementById('mpesaPhone').value : null;
+                const customerName = document.getElementById('customerName').value.trim();
+                const mpesaPhone = document.getElementById('mpesaPhone').value.trim();
 
-                // Validate M-Pesa phone if selected
-                if (method === 'mpesa' && (!mpesaPhone || mpesaPhone.trim() === '')) {
+                if (!customerName) {
+                    alert('Please enter your name');
+                    return;
+                }
+
+                if (!mpesaPhone) {
                     alert('Please enter your M-Pesa phone number');
                     return;
                 }
 
                 try {
                     showLoading('Processing your order...');
-                    const result = await PaymentModule.processPayment(method, cart, total, mpesaPhone);
+                    const result = await PaymentModule.processPayment('mpesa', cart, total, mpesaPhone, customerName);
                     hideLoading();
                     
                     if (result.success) {
