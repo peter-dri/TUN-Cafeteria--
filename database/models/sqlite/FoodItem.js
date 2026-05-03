@@ -14,6 +14,8 @@ class FoodItem {
             (typeof data.ingredients === 'string' ? JSON.parse(data.ingredients) : data.ingredients) : [];
         this.nutritional_info = data.nutritional_info ? 
             (typeof data.nutritional_info === 'string' ? JSON.parse(data.nutritional_info) : data.nutritional_info) : {};
+        this.cafe_id = data.cafe_id || 1;
+        this.plates_available = parseInt(data.plates_available) || 50;
         this.created_at = data.created_at;
         this.updated_at = data.updated_at;
     }
@@ -67,6 +69,62 @@ class FoodItem {
 
     static async getAvailable() {
         return await FoodItem.getAll({ available: true });
+    }
+
+    static async getByCafe(cafeId) {
+        try {
+            const query = `
+                SELECT fi.*, c.name as cafe_name, c.location as cafe_location, c.opening_hours
+                FROM food_items fi
+                LEFT JOIN cafes c ON fi.cafe_id = c.id
+                WHERE fi.cafe_id = ? AND fi.is_available = 1
+                ORDER BY fi.category, fi.name
+            `;
+            const rows = await dbConnection.all(query, [cafeId]);
+            return rows.map(row => new FoodItem(row));
+        } catch (error) {
+            console.error('Error getting food items by cafe:', error);
+            throw error;
+        }
+    }
+
+    static async getAllWithCafeInfo(options = {}) {
+        try {
+            let query = `
+                SELECT fi.*, c.name as cafe_name, c.location as cafe_location, c.opening_hours
+                FROM food_items fi
+                LEFT JOIN cafes c ON fi.cafe_id = c.id
+            `;
+            const params = [];
+            const conditions = [];
+
+            if (options.category) {
+                conditions.push('fi.category = ?');
+                params.push(options.category);
+            }
+
+            if (options.available !== undefined) {
+                conditions.push('fi.is_available = ?');
+                params.push(options.available ? 1 : 0);
+            }
+
+            if (options.cafeId) {
+                conditions.push('fi.cafe_id = ?');
+                params.push(options.cafeId);
+            }
+
+            if (conditions.length > 0) {
+                query += ' WHERE ' + conditions.join(' AND ');
+            }
+
+            query += ' ORDER BY fi.cafe_id, fi.category, fi.name';
+
+            const rows = await dbConnection.all(query, params);
+            return rows.map(row => new FoodItem(row));
+        } catch (error) {
+            console.error('Error getting all food items with cafe info:', error);
+            throw error;
+        }
     }
 
     static async search(searchTerm) {
@@ -219,6 +277,53 @@ class FoodItem {
             return rows.map(row => new FoodItem(row));
         } catch (error) {
             console.error('Error getting popular food items:', error);
+            throw error;
+        }
+    }
+
+    // Reduce plates when an order is placed
+    static async reducePlates(foodItemId, quantity) {
+        try {
+            // First get current plates
+            const item = await FoodItem.findById(foodItemId);
+            if (!item) {
+                throw new Error('Food item not found');
+            }
+
+            const newPlates = Math.max(0, item.plates_available - quantity);
+            const isAvailable = newPlates > 0 ? 1 : 0;
+
+            await dbConnection.run(
+                'UPDATE food_items SET plates_available = ?, is_available = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+                [newPlates, isAvailable, foodItemId]
+            );
+
+            return { platesRemaining: newPlates, isAvailable: newPlates > 0 };
+        } catch (error) {
+            console.error('Error reducing plates:', error);
+            throw error;
+        }
+    }
+
+    // Restore plates when order is cancelled
+    static async restorePlates(foodItemId, quantity) {
+        try {
+            const item = await FoodItem.findById(foodItemId);
+            if (!item) {
+                throw new Error('Food item not found');
+            }
+
+            const newPlates = item.plates_available + quantity;
+            const isAvailable = 1;
+
+            await dbConnection.run(
+                'UPDATE food_items SET plates_available = ?, is_available = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+                [newPlates, isAvailable, foodItemId]
+            );
+
+            return { platesRemaining: newPlates, isAvailable: true };
+        } catch (error) {
+            console.error('Error restoring plates:', error);
             throw error;
         }
     }
