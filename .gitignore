@@ -1,0 +1,11 @@
+# Node and system files
+node_modules/
+dist/
+.env
+
+# Local sqlite database - should not be committed
+tharaka_cafeteria.db
+
+# OS files
+.DS_Store
+thumbs.db
