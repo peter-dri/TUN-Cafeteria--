@@ -142,7 +142,7 @@ const RoleManager = (() => {
         }
 
         // Validate role
-        if (!roleKey) {
+        if (!roleKey || roleKey === 'superAdmin') {
             return { success: false, error: 'Invalid role' };
         }
 

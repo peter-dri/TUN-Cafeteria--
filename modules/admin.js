@@ -1110,6 +1110,10 @@ const AdminModule = (() => {
     }
 
     async function addAdmin(username, password, role) {
+        if (!AuthModule.isSuperAdmin()) {
+            throw new Error('Only Super Admin can add staff accounts');
+        }
+
         if (!appData.adminAccounts) {
             appData.adminAccounts = [];
         }
@@ -1118,6 +1122,11 @@ const AdminModule = (() => {
         const exists = appData.adminAccounts.find(a => a.username === username);
         if (exists) {
             throw new Error('Username already exists');
+        }
+
+        const allowedRoles = new Set(['Staff', 'Manager']);
+        if (!allowedRoles.has(role)) {
+            throw new Error('Only Staff and Manager roles can be assigned here');
         }
 
         const newAdmin = {

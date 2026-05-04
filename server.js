@@ -1448,6 +1448,11 @@ app.post('/api/admin/admins', authenticateToken, (req, res) => {
             return res.status(403).json({ error: 'Only Super Admin can create new admins' });
         }
 
+        const normalizedRole = RoleManager.normalizeRole(role);
+        if (!normalizedRole || normalizedRole === 'superAdmin') {
+            return res.status(400).json({ error: 'Only Staff and Manager accounts can be created here' });
+        }
+
         const data = loadData();
         const result = RoleManager.createAdmin(data, username, password, role);
 
