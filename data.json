@@ -24,6 +24,13 @@
         "available": 97,
         "unit": "cups",
         "category": "breakfast"
+      },
+      {
+        "id": 13,
+        "name": "muthokoi",
+        "price": 20,
+        "available": 13,
+        "unit": "plates"
       }
     ],
     "lunch": [
@@ -70,7 +77,6 @@
       }
     ]
   },
-  "orderCounter": 1048,
   "orderHistory": [
     {
       "id": 1777540891022,
@@ -1104,5 +1110,19 @@
       "paymentStatus": "Paid"
     }
   ],
-  "userPreferences": {}
+  "orderCounter": 1048,
+  "userPreferences": {},
+  "reviews": {},
+  "adminAccounts": [
+    {
+      "username": "pk",
+      "password": "pk123",
+      "role": "Staff",
+      "active": true,
+      "createdAt": "5/4/2026, 10:33:33 AM",
+      "lastLogin": "5/4/2026, 7:33:52 AM"
+    }
+  ],
+  "activityLog": [],
+  "mpesaSessions": {}
 }
