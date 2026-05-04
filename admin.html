@@ -608,6 +608,25 @@
             toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
         }
 
+        let rolesRefreshIntervalId = null;
+
+        function startRolesRefresh() {
+            stopRolesRefresh();
+            rolesRefreshIntervalId = setInterval(() => {
+                const rolesTab = document.getElementById('rolesTab');
+                if (rolesTab && rolesTab.classList.contains('active')) {
+                    AdminModule.renderActivityLog();
+                }
+            }, 30000);
+        }
+
+        function stopRolesRefresh() {
+            if (rolesRefreshIntervalId) {
+                clearInterval(rolesRefreshIntervalId);
+                rolesRefreshIntervalId = null;
+            }
+        }
+
         function activateTab(tab) {
             if (!tab) return;
             resetNavStyles();
@@ -640,6 +659,14 @@
                 AdminModule.renderAnalytics('analyticsContent');
             } else if (tab === 'admins') {
                 AdminModule.renderAdmins('adminsList');
+            } else if (tab === 'roles') {
+                AdminModule.renderRoles();
+                AdminModule.renderActivityLog();
+                startRolesRefresh();
+            }
+
+            if (tab !== 'roles') {
+                stopRolesRefresh();
             }
 
             // remember last active

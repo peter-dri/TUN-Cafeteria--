@@ -1536,6 +1536,10 @@ app.post('/api/admin/admins/:username/deactivate', authenticateToken, (req, res)
  */
 app.get('/api/admin/activity-log', authenticateToken, (req, res) => {
     try {
+        if (RoleManager.normalizeRole(req.user.role) !== 'superAdmin') {
+            return res.status(403).json({ error: 'Only Super Admin can view activity log' });
+        }
+
         const limit = parseInt(req.query.limit) || 50;
         const username = req.query.username;
         const data = loadData();
