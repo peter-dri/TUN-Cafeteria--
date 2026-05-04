@@ -6,12 +6,18 @@ const MenuModule = (() => {
         menuData = menu;
         renderCategory('breakfast', menu.breakfast);
         renderCategory('lunch', menu.lunch);
-        renderCategory('snacks', menu.snacks);
+
+        if (window.OrderingHoursModule && typeof OrderingHoursModule.refresh === 'function') {
+            OrderingHoursModule.refresh();
+        }
     }
 
     function renderCategory(category, items) {
         const container = document.getElementById(category + 'Menu');
-        if (!container) return;
+        if (!container) {
+            console.warn(`Container not found: ${category}Menu`);
+            return;
+        }
 
         container.innerHTML = '';
 
@@ -28,6 +34,7 @@ const MenuModule = (() => {
             return;
         }
 
+        console.log(`Rendering ${category}: ${availableItems.length} items`);
         availableItems.forEach(item => {
             const card = createItemCard(item);
             container.appendChild(card);
@@ -43,10 +50,21 @@ const MenuModule = (() => {
             <h3>${item.name}</h3>
             <p class="price">KSh ${item.price}</p>
             <p class="stock" id="stock-${item.id}">${item.available} ${item.unit || 'available'}</p>
-            <button id="add-btn-${item.id}" class="btn btn-primary btn-sm" onclick="CartModule.add(${item.id}, '${item.name}', ${item.price}, ${item.available})">
-                Add to Cart
-            </button>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+                <button id="add-btn-${item.id}" class="btn btn-primary btn-sm">
+                    Add to Cart
+                </button>
+            </div>
         `;
+
+        // Add event listeners instead of inline onclick
+        const button = card.querySelector(`#add-btn-${item.id}`);
+        button.addEventListener('click', () => {
+            console.log('Add button clicked for item:', { id: item.id, name: item.name, price: item.price, available: item.available });
+            CartModule.add(item.id, item.name, item.price, item.available);
+        });
+
+        // Note: Quick Order button intentionally removed for Student UI.
 
         return card;
     }

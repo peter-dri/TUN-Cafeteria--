@@ -8,9 +8,8 @@ const dbConfig = {
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'tharaka_cafeteria',
     connectionLimit: 10,
-    acquireTimeout: 60000,
-    timeout: 60000,
-    reconnect: true
+    waitForConnections: true,
+    connectTimeout: 60000
 };
 
 // Create connection pool
@@ -69,17 +68,17 @@ async function getNextOrderNumber() {
     
     try {
         await connection.beginTransaction();
-        
-        // Get current counter
-        const [rows] = await connection.execute('SELECT counter FROM order_counter WHERE id = 1');
+        // Lock row and get current counter
+        const [rows] = await connection.execute('SELECT counter FROM order_counter WHERE id = 1 FOR UPDATE');
         const currentCounter = rows[0]?.counter || 1000;
         const nextCounter = currentCounter + 1;
-        
-        // Update counter
+
+        // Update counter to the next value
         await connection.execute('UPDATE order_counter SET counter = ? WHERE id = 1', [nextCounter]);
-        
+
         await connection.commit();
-        return `TUC-${currentCounter}`;
+        // Return the newly assigned order number
+        return `TUC-${nextCounter}`;
     } catch (error) {
         await connection.rollback();
         throw error;

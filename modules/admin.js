@@ -4,15 +4,63 @@ const AdminModule = (() => {
     let posCart = [];
 
     async function loadData() {
-        const response = await fetch('/api/data');
-        appData = await response.json();
-        return appData;
+        try {
+            const token = AuthModule.getToken();
+            const headers = token
+                ? { 'Authorization': `Bearer ${token}` }
+                : {};
+
+            const response = await fetch('/api/data', { headers });
+            if (!response.ok) {
+                throw new Error(`Failed to load data (HTTP ${response.status})`);
+            }
+
+            const data = await response.json();
+
+            if (!data || typeof data !== 'object') {
+                throw new Error('Invalid server response');
+            }
+
+            if (!data.foodData || typeof data.foodData !== 'object') {
+                data.foodData = { breakfast: [], lunch: [], snacks: [] };
+            }
+
+            if (!Array.isArray(data.orderHistory)) {
+                data.orderHistory = [];
+            }
+
+            if (!Array.isArray(data.adminAccounts)) {
+                data.adminAccounts = [];
+            }
+
+            if (!Array.isArray(data.activityLog)) {
+                data.activityLog = [];
+            }
+
+            if (!data.reviews || typeof data.reviews !== 'object') {
+                data.reviews = {};
+            }
+
+            if (!data.mpesaSessions || typeof data.mpesaSessions !== 'object') {
+                data.mpesaSessions = {};
+            }
+
+            appData = data;
+            return appData;
+        } catch (error) {
+            console.error('Error loading admin data:', error);
+            throw error;
+        }
     }
 
     async function saveData() {
+        const token = AuthModule.getToken();
         const response = await fetch('/api/data', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify(appData)
         });
         return response.ok;
@@ -40,8 +88,16 @@ const AdminModule = (() => {
                 availableItems.forEach(item => {
                     const itemDiv = document.createElement('div');
                     itemDiv.style.cssText = 'background: white; padding: 1rem; border-radius: 0.375rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s;';
-                    itemDiv.onmouseover = () => itemDiv.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
-                    itemDiv.onmouseout = () => itemDiv.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                    
+                    // Add hover effects using event listeners instead of inline handlers
+                    itemDiv.addEventListener('mouseover', () => {
+                        itemDiv.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+                    });
+                    itemDiv.addEventListener('mouseout', () => {
+                        itemDiv.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                    });
+                    
+                    itemDiv.setAttribute('data-item-id', item.id);
                     
                     itemDiv.innerHTML = `
                         <div>
@@ -50,9 +106,17 @@ const AdminModule = (() => {
                         </div>
                         <div style="text-align: right;">
                             <div style="color: #2E3192; font-weight: 700; font-size: 1.125rem;">KSh ${item.price}</div>
-                            <button class="btn btn-primary btn-sm" onclick="AdminModule.addToPOSCart(${item.id}, '${item.name}', ${item.price})" style="margin-top: 0.5rem;">Add</button>
+                            <button class="btn btn-primary btn-sm add-pos-btn" style="margin-top: 0.5rem;">Add</button>
                         </div>
                     `;
+                    
+                    // Add event listener for Add button
+                    const addBtn = itemDiv.querySelector('.add-pos-btn');
+                    addBtn.addEventListener('click', () => {
+                        console.log('POS Add button clicked for item:', { id: item.id, name: item.name, price: item.price });
+                        AdminModule.addToPOSCart(item.id, item.name, item.price);
+                    });
+                    
                     container.appendChild(itemDiv);
                 });
             }
@@ -112,20 +176,53 @@ const AdminModule = (() => {
 
             const itemDiv = document.createElement('div');
             itemDiv.style.cssText = 'padding: 0.75rem; background: #F7FAFC; border-radius: 0.375rem; margin-bottom: 0.5rem;';
-            itemDiv.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                    <strong style="font-size: 0.875rem;">${item.name}</strong>
-                    <button onclick="AdminModule.removePOSItem(${item.id})" style="background: none; border: none; color: #E53E3E; cursor: pointer; font-size: 1.25rem;">&times;</button>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <button class="btn-icon" onclick="AdminModule.updatePOSQuantity(${item.id}, -1)">-</button>
-                        <span style="min-width: 30px; text-align: center;">${item.quantity}</span>
-                        <button class="btn-icon" onclick="AdminModule.updatePOSQuantity(${item.id}, 1)">+</button>
-                    </div>
-                    <span style="font-weight: 600;">KSh ${itemTotal}</span>
-                </div>
-            `;
+
+            const header = document.createElement('div');
+            header.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;';
+            const nameEl = document.createElement('strong');
+            nameEl.style.fontSize = '0.875rem';
+            nameEl.textContent = item.name;
+            const removeBtn = document.createElement('button');
+            removeBtn.style.cssText = 'background: none; border: none; color: #E53E3E; cursor: pointer; font-size: 1.25rem;';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.addEventListener('click', () => AdminModule.removePOSItem(item.id));
+            header.appendChild(nameEl);
+            header.appendChild(removeBtn);
+
+            const body = document.createElement('div');
+            body.style.cssText = 'display: flex; justify-content: space-between; align-items: center;';
+
+            const qtyWrap = document.createElement('div');
+            qtyWrap.style.cssText = 'display: flex; gap: 0.5rem; align-items: center;';
+
+            const btnMinus = document.createElement('button');
+            btnMinus.className = 'btn-icon';
+            btnMinus.textContent = '-';
+            btnMinus.addEventListener('click', () => AdminModule.updatePOSQuantity(item.id, -1));
+
+            const qtySpan = document.createElement('span');
+            qtySpan.style.minWidth = '30px';
+            qtySpan.style.textAlign = 'center';
+            qtySpan.textContent = item.quantity;
+
+            const btnPlus = document.createElement('button');
+            btnPlus.className = 'btn-icon';
+            btnPlus.textContent = '+';
+            btnPlus.addEventListener('click', () => AdminModule.updatePOSQuantity(item.id, 1));
+
+            qtyWrap.appendChild(btnMinus);
+            qtyWrap.appendChild(qtySpan);
+            qtyWrap.appendChild(btnPlus);
+
+            const priceEl = document.createElement('span');
+            priceEl.style.fontWeight = '600';
+            priceEl.textContent = `KSh ${itemTotal}`;
+
+            body.appendChild(qtyWrap);
+            body.appendChild(priceEl);
+
+            itemDiv.appendChild(header);
+            itemDiv.appendChild(body);
             container.appendChild(itemDiv);
         });
 
@@ -138,11 +235,19 @@ const AdminModule = (() => {
             return;
         }
 
-        const method = document.getElementById('posPaymentMethod').value;
-        const mpesaPhone = method === 'mpesa' ? document.getElementById('posMpesaPhone').value : null;
+        const method = 'mpesa';
+        const customerNameInput = document.getElementById('posCustomerName');
+        const mpesaPhoneInput = document.getElementById('posMpesaPhone');
+        const customerName = customerNameInput ? customerNameInput.value.trim() : '';
+        const mpesaPhone = mpesaPhoneInput ? mpesaPhoneInput.value.trim() : '';
 
-        if (method === 'mpesa' && (!mpesaPhone || mpesaPhone.trim() === '')) {
-            alert('Please enter customer phone number for M-Pesa payment');
+        if (!customerName) {
+            alert('Please enter the student name');
+            return;
+        }
+
+        if (!mpesaPhone) {
+            alert('Please enter the M-Pesa number');
             return;
         }
 
@@ -157,39 +262,83 @@ const AdminModule = (() => {
         const total = posCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
         try {
-            const response = await fetch('/api/order', {
+            // First, create the order
+            const orderResponse = await fetch('/api/orders', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     items: orderItems,
                     total,
                     paymentMethod: method,
-                    mpesaPhone
+                    mpesaPhone,
+                    customerName
                 })
             });
 
-            const result = await response.json();
+            const orderResult = await orderResponse.json();
 
-            if (result.success) {
-                const paymentInstructions = method === 'mpesa' 
-                    ? `Customer will receive M-Pesa prompt on ${mpesaPhone}\n\n✓ Order will be automatically marked as PAID once M-Pesa confirms.`
-                    : `💵 COLLECT CASH: KSh ${result.order.total}\n\n⚠️ IMPORTANT: After receiving cash, go to the Orders tab and click "Mark as Paid" button for order #${result.order.orderNumber}`;
-                
-                alert(`✓ Order placed successfully!\n\nOrder Number: ${result.order.orderNumber}\nTotal: KSh ${result.order.total}\nPayment: ${result.order.paymentMethod} - ${result.order.paymentStatus}\n\n${paymentInstructions}`);
+            if (orderResult.success) {
+                // If M-Pesa, initiate STK push
+                if (method === 'mpesa') {
+                    try {
+                        // Use centralized auth state to avoid token key mismatches.
+                        const token = AuthModule.getToken();
+                        if (!token) {
+                            alert('Session expired. Please login again.');
+                            return;
+                        }
+
+                        // Initiate STK push
+                        const stkResponse = await fetch('/api/mpesa/stk-push', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({
+                                phone: mpesaPhone,
+                                amount: total,
+                                orderId: orderResult.order.orderNumber,
+                                description: `Order #${orderResult.order.orderNumber} - KSh ${total}`
+                            })
+                        });
+
+                        const stkResult = await stkResponse.json();
+
+                        if (stkResult.success) {
+                            const paymentInstructions = `📱 M-PESA STK PUSH SENT\n\n✓ Customer will receive M-Pesa prompt on ${mpesaPhone}\n✓ They will enter their PIN to complete payment\n✓ Order will be automatically marked as PAID once payment is confirmed\n\nCheckout ID: ${stkResult.checkoutRequestId}`;
+                            
+                            alert(`✓ Order placed successfully!\n\nOrder Number: ${orderResult.order.orderNumber}\nTotal: KSh ${orderResult.order.total}\nPayment: ${orderResult.order.paymentMethod}\n\n${paymentInstructions}`);
+                        } else {
+                            // STK push failed, but order was created
+                            alert(`✓ Order placed successfully!\n\nOrder Number: ${orderResult.order.orderNumber}\nTotal: KSh ${orderResult.order.total}\n\n⚠️ STK Push failed: ${stkResult.error}\n\nPlease contact support or retry payment from the Orders tab.`);
+                        }
+                    } catch (stkError) {
+                        // STK push error, but order was created
+                        alert(`✓ Order placed successfully!\n\nOrder Number: ${orderResult.order.orderNumber}\nTotal: KSh ${orderResult.order.total}\n\n⚠️ M-Pesa payment error: ${stkError.message}\n\nPlease retry from the Orders tab.`);
+                    }
+                } else {
+                    // Cash payment
+                    const paymentInstructions = `💵 COLLECT CASH: KSh ${orderResult.order.total}\n\n⚠️ IMPORTANT: After receiving cash, go to the Orders tab and click "Mark as Paid" button for order #${orderResult.order.orderNumber}`;
+                    alert(`✓ Order placed successfully!\n\nOrder Number: ${orderResult.order.orderNumber}\nTotal: KSh ${orderResult.order.total}\nPayment: ${orderResult.order.paymentMethod}\n\n${paymentInstructions}`);
+                }
+
                 posCart = [];
                 renderPOSCart();
+                if (customerNameInput) customerNameInput.value = '';
+                if (mpesaPhoneInput) mpesaPhoneInput.value = '';
                 await loadData();
                 renderPOSMenu('posMenu');
             } else {
-                alert('Error: ' + (result.error || 'Failed to place order'));
+                alert('Error: ' + (orderResult.error || 'Failed to place order'));
             }
         } catch (error) {
             alert('Error placing order: ' + error.message);
         }
     }
 
-    function clearPOSOrder() {
-        if (posCart.length > 0 && !confirm('Clear current order?')) return;
+    async function clearPOSOrder() {
+        if (posCart.length > 0 && !(await Confirm.confirm('Clear current order?'))) return;
         posCart = [];
         renderPOSCart();
     }
@@ -212,17 +361,41 @@ const AdminModule = (() => {
                 const div = document.createElement('div');
                 div.className = 'admin-item';
                 div.style.cssText = itemStyle;
-                div.innerHTML = `
-                    <div>
-                        <strong>${item.name}${soldOutBadge}</strong>
-                        <p>Current: ${item.available} ${item.unit || 'plates'}</p>
-                    </div>
-                    <div class="admin-actions">
-                        <input type="number" id="qty-${item.id}" value="${item.available}" min="0" style="width: 80px;">
-                        <button class="btn btn-primary btn-sm" onclick="AdminModule.updateQuantity(${item.id})">Update</button>
-                        <button class="btn btn-secondary btn-sm" onclick="AdminModule.deleteItem(${item.id})">Delete</button>
-                    </div>
-                `;
+
+                const info = document.createElement('div');
+                const strong = document.createElement('strong');
+                strong.innerHTML = `${item.name}${soldOutBadge}`;
+                const p = document.createElement('p');
+                p.textContent = `Current: ${item.available} ${item.unit || 'plates'}`;
+                info.appendChild(strong);
+                info.appendChild(p);
+
+                const actions = document.createElement('div');
+                actions.className = 'admin-actions';
+
+                const inputQty = document.createElement('input');
+                inputQty.type = 'number';
+                inputQty.id = `qty-${item.id}`;
+                inputQty.value = item.available;
+                inputQty.min = 0;
+                inputQty.style.width = '80px';
+
+                const updateBtn = document.createElement('button');
+                updateBtn.className = 'btn btn-primary btn-sm';
+                updateBtn.textContent = 'Update';
+                updateBtn.addEventListener('click', () => AdminModule.updateQuantity(item.id));
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn btn-secondary btn-sm';
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.addEventListener('click', () => AdminModule.deleteItem(item.id));
+
+                actions.appendChild(inputQty);
+                actions.appendChild(updateBtn);
+                actions.appendChild(deleteBtn);
+
+                div.appendChild(info);
+                div.appendChild(actions);
                 container.appendChild(div);
             });
         }
@@ -243,7 +416,7 @@ const AdminModule = (() => {
     }
 
     async function deleteItem(itemId) {
-        if (!confirm('Delete this item?')) return;
+        if (!await Confirm.confirm('Delete this item?')) return;
 
         for (let cat in appData.foodData) {
             appData.foodData[cat] = appData.foodData[cat].filter(i => i.id !== itemId);
@@ -298,34 +471,80 @@ const AdminModule = (() => {
         ordersToRender.forEach(order => {
             const div = document.createElement('div');
             div.className = 'order-card';
-            const itemsList = order.items.map(i => 
-                `<li>${i.name} × ${i.quantity} = KSh ${i.total || (i.price * i.quantity)}</li>`
-            ).join('');
 
-            const badgeClass = order.paymentStatus === 'Paid' ? 'paid' : 'pending';
-            const paymentBadge = `<span class="status-badge ${badgeClass}">${order.paymentStatus}</span>`;
-            
-            // Add verify payment button for pending cash orders
-            const verifyButton = (order.paymentStatus === 'Pending' && order.paymentMethod === 'cash') 
-                ? `<button class="btn btn-primary btn-sm" onclick="AdminModule.verifyPayment('${order.orderNumber}')" style="margin-left: 0.5rem;">✓ Mark as Paid</button>`
-                : '';
+            // Header
+            const header = document.createElement('div');
+            header.className = 'order-header';
+            const orderStrong = document.createElement('strong');
+            orderStrong.textContent = `Order #${order.orderNumber}`;
+            const headerRight = document.createElement('div');
+            headerRight.style.cssText = 'display: flex; gap: 0.5rem; align-items: center;';
+            const totalSpan = document.createElement('span');
+            totalSpan.textContent = `KSh ${order.total}`;
+            const printBtn = document.createElement('button');
+            printBtn.className = 'print-btn';
+            printBtn.textContent = '🖨️ Print';
+            printBtn.addEventListener('click', () => AdminModule.printReceipt(order.orderNumber));
+            headerRight.appendChild(totalSpan);
+            headerRight.appendChild(printBtn);
+            header.appendChild(orderStrong);
+            header.appendChild(headerRight);
 
-            div.innerHTML = `
-                <div class="order-header">
-                    <strong>Order #${order.orderNumber}</strong>
-                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <span>KSh ${order.total}</span>
-                        <button class="print-btn" onclick="AdminModule.printReceipt('${order.orderNumber}')">🖨️ Print</button>
-                    </div>
-                </div>
-                <p class="order-time">${order.timestamp}</p>
-                <ul>${itemsList}</ul>
-                <p style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                    <strong>Payment:</strong> ${order.paymentMethod} ${paymentBadge}
-                    ${order.mpesaPhone ? `<span style="color: #718096; font-size: 0.875rem;">(${order.mpesaPhone})</span>` : ''}
-                    ${verifyButton}
-                </p>
-            `;
+            // Time
+            const timeP = document.createElement('p');
+            timeP.className = 'order-time';
+            timeP.textContent = order.timestamp;
+
+            // Items list
+            const ul = document.createElement('ul');
+            order.items.forEach(i => {
+                const li = document.createElement('li');
+                li.textContent = `${i.name} × ${i.quantity} = KSh ${i.total || (i.price * i.quantity)}`;
+                ul.appendChild(li);
+            });
+
+            // Payment row
+            const paymentRow = document.createElement('p');
+            paymentRow.style.cssText = 'display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;';
+            const paymentLabel = document.createElement('strong');
+            paymentLabel.textContent = 'Payment:';
+            const badgeSpan = document.createElement('span');
+            badgeSpan.className = `status-badge ${order.paymentStatus === 'Paid' ? 'paid' : 'pending'}`;
+            badgeSpan.textContent = order.paymentStatus;
+            const methodText = document.createTextNode(` ${order.paymentMethod} `);
+            paymentRow.appendChild(paymentLabel);
+            paymentRow.appendChild(document.createTextNode(' '));
+            paymentRow.appendChild(methodText);
+            paymentRow.appendChild(badgeSpan);
+
+            if (order.mpesaPhone) {
+                const phoneSpan = document.createElement('span');
+                phoneSpan.style.cssText = 'color: #718096; font-size: 0.875rem;';
+                phoneSpan.textContent = `(${order.mpesaPhone})`;
+                paymentRow.appendChild(phoneSpan);
+            }
+
+            // Verify button for pending cash
+            if ((order.paymentStatus === 'Pending Confirmation' || order.paymentStatus === 'Pending Verification') && order.paymentMethod === 'cash') {
+                const verifyBtn = document.createElement('button');
+                verifyBtn.className = 'btn btn-primary btn-sm verify-payment-btn';
+                verifyBtn.style.marginLeft = '0.5rem';
+                verifyBtn.textContent = '✓ Confirm Payment';
+                verifyBtn.addEventListener('click', () => AdminModule.verifyPayment(order.orderNumber));
+                paymentRow.appendChild(verifyBtn);
+            } else if (order.paymentStatus === 'Pending Verification' && order.paymentMethod === 'mpesa') {
+                const verifyBtn = document.createElement('button');
+                verifyBtn.className = 'btn btn-primary btn-sm verify-payment-btn';
+                verifyBtn.style.marginLeft = '0.5rem';
+                verifyBtn.textContent = '✓ Verify M-Pesa';
+                verifyBtn.addEventListener('click', () => AdminModule.verifyPayment(order.orderNumber));
+                paymentRow.appendChild(verifyBtn);
+            }
+
+            div.appendChild(header);
+            div.appendChild(timeP);
+            div.appendChild(ul);
+            div.appendChild(paymentRow);
             container.appendChild(div);
         });
     }
@@ -388,11 +607,11 @@ const AdminModule = (() => {
                 </div>
 
                 ${isPaid ? 
-                    '<p style="color: #2E3192; font-weight: 600; text-align: center;">✓ Payment Verified - Order can be fulfilled</p>' : 
+                    '<p style="color: #2E3192; font-weight: 600; text-align: center;">✓ Payment Paid - Order can be fulfilled</p>' : 
                     `<div style="text-align: center;">
                         <p style="color: #F59E0B; font-weight: 600; margin-bottom: 1rem;">⚠ Payment Pending - Verify payment before fulfilling order</p>
                         ${order.paymentMethod === 'cash' ? 
-                            `<button class="btn btn-primary" onclick="AdminModule.verifyPayment('${order.orderNumber}')" style="padding: 0.75rem 2rem; font-size: 1rem;">
+                            `<button class="btn btn-primary verify-payment-btn order-search-verify" data-order-number="${order.orderNumber}" style="padding: 0.75rem 2rem; font-size: 1rem;">
                                 ✓ Mark as Paid (Cash Received)
                             </button>` : 
                             '<p style="color: #718096; font-size: 0.875rem;">Waiting for M-Pesa confirmation...</p>'
@@ -401,6 +620,12 @@ const AdminModule = (() => {
                 }
             </div>
         `;
+
+        // Attach event listener to search result verify button (CSP-safe)
+        const searchVerifyBtn = resultContainer.querySelector('.order-search-verify');
+        if (searchVerifyBtn) {
+            searchVerifyBtn.addEventListener('click', () => verifyPayment(searchVerifyBtn.getAttribute('data-order-number')));
+        }
     }
 
     function clearOrderSearch() {
@@ -847,34 +1072,48 @@ const AdminModule = (() => {
         }
 
         const currentAdmin = AuthModule.getCurrentAdmin();
+        const currentAdminUsername = currentAdmin ? currentAdmin.username : null;
 
         appData.adminAccounts.forEach(admin => {
             const div = document.createElement('div');
             div.className = 'admin-item';
-            
-            const statusBadge = admin.active 
-                ? '<span style="color: #2E3192; font-weight: 600;">● Active</span>' 
-                : '<span style="color: #718096;">● Inactive</span>';
-            
-            const isCurrentUser = admin.id === currentAdmin.id;
-            const deleteBtn = isCurrentUser 
-                ? '' 
-                : `<button class="btn btn-secondary btn-sm" onclick="AdminModule.removeAdmin(${admin.id})">Remove</button>`;
 
-            div.innerHTML = `
-                <div>
-                    <strong>${admin.username}</strong>
-                    <p>${admin.role} ${statusBadge} ${isCurrentUser ? '(You)' : ''}</p>
-                </div>
-                <div class="admin-actions">
-                    ${deleteBtn}
-                </div>
-            `;
+            const statusBadge = admin.active
+                ? '● Active'
+                : '● Inactive';
+
+            const info = document.createElement('div');
+            const strong = document.createElement('strong');
+            strong.textContent = admin.username;
+            const p = document.createElement('p');
+            p.style.margin = '0';
+            const roleLabel = admin.roleName || admin.role || 'Unknown';
+            p.innerHTML = `${roleLabel} <span style="color: ${admin.active ? '#2E3192' : '#718096'}; font-weight: ${admin.active ? 600 : 400};">${statusBadge}</span> ${admin.username === currentAdminUsername ? '(You)' : ''}`;
+            info.appendChild(strong);
+            info.appendChild(p);
+
+            const actions = document.createElement('div');
+            actions.className = 'admin-actions';
+
+            if (admin.username !== currentAdminUsername) {
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'btn btn-secondary btn-sm';
+                removeBtn.textContent = 'Remove';
+                removeBtn.addEventListener('click', () => AdminModule.removeAdmin(admin.username));
+                actions.appendChild(removeBtn);
+            }
+
+            div.appendChild(info);
+            div.appendChild(actions);
             container.appendChild(div);
         });
     }
 
     async function addAdmin(username, password, role) {
+        if (!AuthModule.isSuperAdmin()) {
+            throw new Error('Only Super Admin can add staff accounts');
+        }
+
         if (!appData.adminAccounts) {
             appData.adminAccounts = [];
         }
@@ -885,35 +1124,36 @@ const AdminModule = (() => {
             throw new Error('Username already exists');
         }
 
-        // Get max ID
-        let maxId = 0;
-        appData.adminAccounts.forEach(a => {
-            if (a.id > maxId) maxId = a.id;
-        });
+        const allowedRoles = new Set(['Staff', 'Manager']);
+        if (!allowedRoles.has(role)) {
+            throw new Error('Only Staff and Manager roles can be assigned here');
+        }
 
         const newAdmin = {
-            id: maxId + 1,
             username,
             password,
             role,
-            active: true
+            active: true,
+            createdAt: new Date().toLocaleString(),
+            lastLogin: null
         };
 
         appData.adminAccounts.push(newAdmin);
         await saveData();
+        await loadData();
         return true;
     }
 
-    async function removeAdmin(adminId) {
-        if (!confirm('Are you sure you want to remove this admin?')) return;
+    async function removeAdmin(adminUsername) {
+        if (!await Confirm.confirm('Are you sure you want to remove this admin?')) return;
 
         const currentAdmin = AuthModule.getCurrentAdmin();
-        if (adminId === currentAdmin.id) {
+        if (currentAdmin && adminUsername === currentAdmin.username) {
             alert('You cannot remove yourself!');
             return;
         }
 
-        appData.adminAccounts = appData.adminAccounts.filter(a => a.id !== adminId);
+        appData.adminAccounts = appData.adminAccounts.filter(a => a.username !== adminUsername);
         await saveData();
         await loadData();
         renderAdmins('adminsList');
@@ -934,20 +1174,136 @@ const AdminModule = (() => {
             return;
         }
         
-        if (!confirm(`Confirm that you have received KSh ${order.total} in cash from the customer?`)) {
+        const message = order.paymentMethod === 'cash' 
+            ? `Confirm that you have received KSh ${order.total} in CASH from the customer?`
+            : `Verify M-Pesa payment of KSh ${order.total} from ${order.mpesaPhone}?`;
+        
+        if (!await Confirm.confirm(message)) {
             return;
         }
         
-        // Update payment status
-        order.paymentStatus = 'Paid';
-        
-        // Save to server
-        await saveData();
-        
-        // Refresh the orders display
-        renderOrders('ordersList');
-        
-        alert(`✓ Payment verified!\n\nOrder #${orderNumber} is now marked as PAID.\nTotal: KSh ${order.total}`);
+        try {
+            // Require auth token
+            const token = AuthModule.getToken();
+            if (!token) {
+                alert('Authentication required. Please log in again.');
+                return;
+            }
+
+            // Use API to verify payment
+            const response = await fetch(`/api/orders/${orderNumber}/payment`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ paymentStatus: 'Paid' })
+            });
+
+            if (!response.ok) {
+                // Try to show server-provided error details when available
+                try {
+                    const err = await response.json();
+                    throw new Error(err.error || err.message || `HTTP ${response.status}`);
+                } catch (parseErr) {
+                    throw new Error(`Failed to verify payment (status ${response.status})`);
+                }
+            }
+
+            const result = await response.json();
+
+            if (result && result.order) {
+                order.paymentStatus = result.order.paymentStatus || 'Paid';
+            } else {
+                order.paymentStatus = 'Paid';
+            }
+
+            await loadData();
+            // Refresh the orders display from current appData
+            renderOrders('ordersList');
+
+            alert(`✓ Payment confirmed!\\n\\nOrder #${orderNumber} is now PAID.\\nTotal: KSh ${order.total}`);
+        } catch (error) {
+            console.error('Error verifying payment:', error);
+            alert('Failed to verify payment. ' + (error && error.message ? error.message : 'Please try again.'));
+        }
+    }
+
+    // Loyalty management removed from admin UI
+
+    // ===== ROLE & ACCESS MANAGEMENT =====
+
+    async function renderRoles() {
+        const container = document.getElementById('rolesList');
+        if (!container) return;
+
+        container.innerHTML = '<div class="admin-spinner"></div>';
+        try {
+            const token = AuthModule.getToken();
+            const response = await fetch('/api/admin/roles', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            const roles = data.roles || [];
+
+            let html = '<div style="display: grid; gap: 1rem;">';
+            roles.forEach(role => {
+                html += `
+                    <div class="admin-card" style="margin-bottom: 0;">
+                        <h4 style="color: #2D3748; margin: 0 0 0.5rem 0;">${role.name}</h4>
+                        <p style="color: #718096; margin: 0 0 0.75rem 0; font-size: 0.875rem;">${role.description}</p>
+                        <details style="font-size: 0.875rem; color: #4A5568;">
+                            <summary style="cursor: pointer; font-weight: 600; margin-bottom: 0.5rem;">View Permissions (${role.permissions.length})</summary>
+                            <ul style="margin: 0.5rem 0 0 1.5rem;">
+                                ${role.permissions.map(p => `<li>${p}</li>`).join('')}
+                            </ul>
+                        </details>
+                    </div>
+                `;
+            });
+            html += '</div>';
+
+            container.innerHTML = html;
+        } catch (error) {
+            container.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+        }
+    }
+
+    async function renderActivityLog(limit = 50) {
+        const container = document.getElementById('activityLog');
+        if (!container) return;
+
+        container.innerHTML = '<div class="admin-spinner"></div>';
+        try {
+            const token = AuthModule.getToken();
+            const response = await fetch(`/api/admin/activity-log?limit=${limit}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            const logs = data.activityLog || [];
+
+            if (logs.length === 0) {
+                container.innerHTML = '<p>No activity logged yet</p>';
+                return;
+            }
+
+            let html = '<table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">';
+            html += '<tr><th>Time</th><th>Admin</th><th>Action</th><th>Details</th></tr>';
+            logs.forEach(log => {
+                const details = log.details ? Object.keys(log.details).map(k => `${k}: ${log.details[k]}`).join(', ') : '-';
+                html += `<tr style="border-bottom: 1px solid #E2E8F0;">
+                    <td>${log.timestamp}</td>
+                    <td><strong>${log.username}</strong></td>
+                    <td>${log.action}</td>
+                    <td style="color: #718096; font-size: 0.75rem;">${details}</td>
+                </tr>`;
+            });
+            html += '</table>';
+
+            container.innerHTML = html;
+        } catch (error) {
+            container.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+        }
     }
 
     return {
@@ -972,6 +1328,9 @@ const AdminModule = (() => {
         searchOrder,
         clearOrderSearch,
         printReceipt,
-        verifyPayment
+        verifyPayment,
+        
+        renderRoles,
+        renderActivityLog
     };
 })();

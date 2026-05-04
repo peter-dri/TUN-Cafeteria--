@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Your Order - Tharaka Cafeteria</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .tracking-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .tracking-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .tracking-input-group input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #CBD5E0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .tracking-input-group button {
+            padding: 0.75rem 1.5rem;
+            background: #3182CE;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .tracking-input-group button:hover {
+            background: #2563EB;
+        }
+
+        .order-card {
+            background: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #EDF2F7;
+            padding-bottom: 1rem;
+        }
+
+        .order-number {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1A365D;
+        }
+
+        .order-time {
+            font-size: 0.875rem;
+            color: #718096;
+        }
+
+        .status-timeline {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .status-timeline::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #E2E8F0;
+        }
+
+        .status-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .status-dot {
+            width: 40px;
+            height: 40px;
+            background: #E2E8F0;
+            border-radius: 50%;
+            margin: 0 auto 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .status-item.completed .status-dot {
+            background: #48BB78;
+            color: white;
+        }
+
+        .status-item.active .status-dot {
+            background: #3182CE;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .status-label {
+            font-size: 0.875rem;
+            color: #4A5568;
+            font-weight: 600;
+        }
+
+        .order-details {
+            background: #F7FAFC;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #718096;
+            font-weight: 600;
+        }
+
+        .detail-value {
+            color: #1A365D;
+            font-weight: 600;
+        }
+
+        .items-list {
+            margin: 1rem 0;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid #3182CE;
+        }
+
+        .item-name {
+            font-weight: 600;
+        }
+
+        .item-qty {
+            color: #718096;
+        }
+
+        .eta-card {
+            background: #EBF8FF;
+            border-left: 4px solid #3182CE;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .eta-time {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3182CE;
+        }
+
+        .error-message {
+            background: #FED7D7;
+            color: #C53030;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            border-left: 4px solid #C53030;
+        }
+
+        .success-message {
+            background: #C6F6D5;
+            color: #22543D;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            border-left: 4px solid #48BB78;
+        }
+
+        .loyalty-section {
+            background: #FBF3C7;
+            border: 2px dashed #F59E0B;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .loyalty-title {
+            font-weight: 700;
+            color: #92400E;
+            margin-bottom: 0.5rem;
+        }
+
+        .loyalty-info {
+            font-size: 0.875rem;
+            color: #78350F;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid #E2E8F0;
+            border-top: 4px solid #3182CE;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .auto-refresh {
+            text-align: center;
+            font-size: 0.875rem;
+            color: #718096;
+            margin-top: 1rem;
+        }
+
+        .nav-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #3182CE;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="tracking-container">
+        <h1 style="text-align: center; margin-bottom: 2rem;">🍽️ Order Tracking</h1>
+
+        <div class="tracking-input-group">
+            <input 
+                type="text" 
+                id="orderNumber" 
+                placeholder="Enter order number (e.g., TUC-1001)" 
+                autocomplete="off"
+            >
+            <button onclick="trackOrder()">Track</button>
+        </div>
+
+        <div id="trackingResult"></div>
+
+        <a href="index.html" class="nav-link">← Back to Menu</a>
+    </div>
+
+    <script>
+        // Auto-load if order number in URL query param
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const orderNum = params.get('order');
+            if (orderNum) {
+                document.getElementById('orderNumber').value = orderNum;
+                trackOrder();
+            }
+        });
+
+        // Auto-refresh every 10 seconds if order is displayed
+        let refreshInterval;
+
+        async function trackOrder() {
+            const orderNumber = document.getElementById('orderNumber').value.trim().toUpperCase();
+            const resultDiv = document.getElementById('trackingResult');
+
+            if (!orderNumber) {
+                resultDiv.innerHTML = '<div class="error-message">Please enter an order number</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Searching for your order...</p></div>';
+
+            try {
+                const response = await fetch(`/api/orders/${orderNumber}`);
+                const order = await response.json();
+
+                if (!order || order.error) {
+                    resultDiv.innerHTML = `<div class="error-message">❌ Order ${orderNumber} not found. Please check the number and try again.</div>`;
+                    clearInterval(refreshInterval);
+                    return;
+                }
+
+                // Display order tracking
+                displayOrderTracking(order);
+
+                // Start auto-refresh
+                clearInterval(refreshInterval);
+                if (!['Completed', 'Cancelled'].includes(order.orderStatus)) {
+                    refreshInterval = setInterval(() => trackOrder(), 10000);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error-message">❌ Error: ${error.message}</div>`;
+                clearInterval(refreshInterval);
+            }
+        }
+
+        function displayOrderTracking(order) {
+            const resultDiv = document.getElementById('trackingResult');
+            const statuses = ['Received', 'Preparing', 'Ready', 'Completed'];
+            const currentStatusIndex = statuses.indexOf(order.orderStatus);
+
+            let statusTimeline = '<div class="status-timeline">';
+            statuses.forEach((status, index) => {
+                const isCompleted = index < currentStatusIndex;
+                const isActive = index === currentStatusIndex;
+                const statusClass = isCompleted || isActive ? 'completed' : '';
+                const activeClass = isActive ? 'active' : '';
+
+                statusTimeline += `
+                    <div class="status-item ${statusClass} ${activeClass}">
+                        <div class="status-dot">${isCompleted ? '✓' : isActive ? '⏳' : ''}</div>
+                        <div class="status-label">${status}</div>
+                    </div>
+                `;
+            });
+            statusTimeline += '</div>';
+
+            // Calculate ETA (rough estimate based on status)
+            let etaText = '';
+            if (order.orderStatus === 'Received') {
+                etaText = '⏱️ Estimated time: 15-20 minutes';
+            } else if (order.orderStatus === 'Preparing') {
+                etaText = '⏱️ Almost ready: 5-10 minutes';
+            } else if (order.orderStatus === 'Ready') {
+                etaText = '✅ Your order is ready! Come collect now';
+            } else if (order.orderStatus === 'Completed') {
+                etaText = '✅ Order completed';
+            }
+
+            const etaHtml = etaText ? `<div class="eta-card">${etaText}</div>` : '';
+
+            // Items list
+            let itemsHtml = '<div class="items-list"><strong>Items:</strong>';
+            order.items?.forEach(item => {
+                itemsHtml += `
+                    <div class="item-row">
+                        <div>
+                            <div class="item-name">${item.name}</div>
+                            <div class="item-qty">Qty: ${item.quantity}</div>
+                        </div>
+                        <div><strong>KSh ${item.price * item.quantity}</strong></div>
+                    </div>
+                `;
+            });
+            itemsHtml += '</div>';
+
+            // Loyalty info (if applicable)
+            let loyaltyHtml = '';
+            if (order.mpesaPhone) {
+                loyaltyHtml = `
+                    <div class="loyalty-section">
+                        <div class="loyalty-title">💎 Loyalty Points</div>
+                        <div class="loyalty-info">
+                            You've earned approximately <strong>${Math.round(order.total)} points</strong> with this order!
+                            <br>Redeem your points for discounts.
+                        </div>
+                    </div>
+                `;
+            }
+
+            const html = `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-number">#${order.orderNumber}</div>
+                            <div class="order-time">${order.timestamp}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <strong>KSh ${order.total}</strong>
+                            <div style="font-size: 0.875rem; color: #718096;">
+                                ${order.paymentStatus}
+                            </div>
+                        </div>
+                    </div>
+
+                    ${statusTimeline}
+                    ${etaHtml}
+
+                    <div class="order-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Order Status:</span>
+                            <span class="detail-value">${order.orderStatus}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Payment:</span>
+                            <span class="detail-value">${order.paymentMethod === 'mpesa' ? '📱 M-Pesa' : '💵 Cash'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Payment Status:</span>
+                            <span class="detail-value">${order.paymentStatus}</span>
+                        </div>
+                        ${order.mpesaRef ? `
+                        <div class="detail-row">
+                            <span class="detail-label">M-Pesa Ref:</span>
+                            <span class="detail-value">${order.mpesaRef}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    ${itemsHtml}
+                    ${loyaltyHtml}
+
+                    <div class="auto-refresh">
+                        🔄 Auto-refreshing every 10 seconds...
+                    </div>
+                </div>
+            `;
+
+            resultDiv.innerHTML = html;
+        }
+
+        // Allow Enter key to track
+        document.getElementById('orderNumber').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') trackOrder();
+        });
+    </script>
+</body>
+</html>
