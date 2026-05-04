@@ -103,7 +103,20 @@ function loadData() {
         }
 
         const content = fs.readFileSync(DATA_FILE, 'utf8');
-        dataCache = JSON.parse(content);
+        const parsedData = JSON.parse(content);
+        dataCache = {
+            ...getDefaultData(),
+            ...parsedData,
+            foodData: {
+                ...getDefaultData().foodData,
+                ...(parsedData.foodData || {})
+            },
+            userPreferences: parsedData.userPreferences || {},
+            reviews: parsedData.reviews || {},
+            adminAccounts: Array.isArray(parsedData.adminAccounts) ? parsedData.adminAccounts : [],
+            activityLog: Array.isArray(parsedData.activityLog) ? parsedData.activityLog : [],
+            mpesaSessions: parsedData.mpesaSessions || {}
+        };
         dataCacheMtimeMs = fileStats.mtimeMs;
         return dataCache;
     } catch (error) {
@@ -142,7 +155,9 @@ function getDefaultData() {
         orderCounter: 1000,
         userPreferences: {},
         reviews: {},
-        adminAccounts: []
+        adminAccounts: [],
+        activityLog: [],
+        mpesaSessions: {}
     };
 }
 
@@ -217,7 +232,6 @@ function validateOrderData(items, total, paymentMethod, mpesaPhone) {
  */
 app.post('/api/admin/login', (req, res) => {
     try {
-        console.log('DEBUG: admin login body =>', req.body);
         const { username, password } = req.body || {};
 
         if (!username || !password) {
@@ -226,18 +240,36 @@ app.post('/api/admin/login', (req, res) => {
             });
         }
 
-        // Hardcoded credentials (production should use database)
+        const data = loadData();
         const defaultAdmins = {
-            'admin': 'admin123'
+            admin: {
+                password: 'admin123',
+                role: 'superAdmin'
+            }
         };
 
-        if (!defaultAdmins[username] || defaultAdmins[username] !== password) {
+        const defaultAdmin = defaultAdmins[username];
+        const storedAdmin = (data.adminAccounts || []).find(account => account.username === username && account.active !== false);
+        const isDefaultAdminValid = defaultAdmin && defaultAdmin.password === password;
+        const isStoredAdminValid = storedAdmin && storedAdmin.password === password;
+
+        if (!isDefaultAdminValid && !isStoredAdminValid) {
             return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        const roleKey = isStoredAdminValid
+            ? (RoleManager.normalizeRole(storedAdmin.role) || storedAdmin.role)
+            : defaultAdmin.role;
+        const roleName = RoleManager.getRoleDisplayName(roleKey);
+
+        if (isStoredAdminValid) {
+            storedAdmin.lastLogin = new Date().toLocaleString();
+            saveData(data);
         }
 
         // Generate token
         const token = jwt.sign(
-            { username, role: 'admin' },
+            { username, role: roleKey },
             JWT_SECRET,
             { expiresIn: '24h' }
         );
@@ -248,7 +280,7 @@ app.post('/api/admin/login', (req, res) => {
             token,
             admin: {
                 username,
-                role: 'admin'
+                role: roleName
             }
         });
     } catch (error) {
@@ -286,20 +318,19 @@ app.get('/api/data', authenticateToken, (req, res) => {
         const includeOrderHistory = req.query.includeOrderHistory !== 'false';
         const includeUserPreferences = req.query.includeUserPreferences !== 'false';
         const orderLimit = clampNumber(req.query.orderLimit, 0, 5000, 0);
-        
-        const payload = {
-            foodData: data.foodData,
-            orderCounter: data.orderCounter
-        };
+
+        const payload = { ...data };
 
         if (includeOrderHistory) {
             payload.orderHistory = orderLimit > 0
                 ? (data.orderHistory || []).slice(0, orderLimit)
                 : (data.orderHistory || []);
+        } else {
+            delete payload.orderHistory;
         }
 
-        if (includeUserPreferences) {
-            payload.userPreferences = data.userPreferences || {};
+        if (!includeUserPreferences) {
+            delete payload.userPreferences;
         }
 
         res.json(payload);
@@ -315,17 +346,28 @@ app.get('/api/data', authenticateToken, (req, res) => {
  */
 app.post('/api/data', authenticateToken, (req, res) => {
     try {
-        const data = req.body;
+        const incomingData = req.body;
 
         // Validate data structure
-        if (!data || typeof data !== 'object') {
+        if (!incomingData || typeof incomingData !== 'object') {
             return res.status(400).json({ error: 'Invalid data format' });
         }
+
+        const existingData = loadData();
+        const data = {
+            ...existingData,
+            ...incomingData
+        };
 
         // Ensure required fields exist
         if (!data.foodData) data.foodData = {};
         if (!Array.isArray(data.orderHistory)) data.orderHistory = [];
         if (!data.orderCounter) data.orderCounter = 1000;
+        if (!Array.isArray(data.adminAccounts)) data.adminAccounts = [];
+        if (!Array.isArray(data.activityLog)) data.activityLog = [];
+        if (!data.mpesaSessions || typeof data.mpesaSessions !== 'object') data.mpesaSessions = {};
+        if (!data.reviews || typeof data.reviews !== 'object') data.reviews = {};
+        if (!data.userPreferences || typeof data.userPreferences !== 'object') data.userPreferences = {};
 
         // Save to file
         if (saveData(data)) {
@@ -1374,6 +1416,10 @@ app.get('/api/admin/roles', authenticateToken, (req, res) => {
  */
 app.get('/api/admin/admins', authenticateToken, (req, res) => {
     try {
+        if (RoleManager.normalizeRole(req.user.role) !== 'superAdmin') {
+            return res.status(403).json({ error: 'Only Super Admin can view admin accounts' });
+        }
+
         const data = loadData();
         const admins = RoleManager.getAdmins(data);
         res.json({
@@ -1398,20 +1444,19 @@ app.post('/api/admin/admins', authenticateToken, (req, res) => {
             return res.status(400).json({ error: 'Username, password, and role are required' });
         }
 
-        // Check if user is super admin (in real app, check role from token)
-        if (true) { // TODO: Add role check
-            const data = loadData();
-            const result = RoleManager.createAdmin(data, username, password, role);
+        if (RoleManager.normalizeRole(req.user.role) !== 'superAdmin') {
+            return res.status(403).json({ error: 'Only Super Admin can create new admins' });
+        }
 
-            if (result.success) {
-                saveData(data);
-                res.status(201).json(result);
-                RoleManager.logActivity(data, req.user.username, 'create_admin', { newAdmin: username, role });
-            } else {
-                res.status(400).json(result);
-            }
+        const data = loadData();
+        const result = RoleManager.createAdmin(data, username, password, role);
+
+        if (result.success) {
+            saveData(data);
+            res.status(201).json(result);
+            RoleManager.logActivity(data, req.user.username, 'create_admin', { newAdmin: username, role });
         } else {
-            res.status(403).json({ error: 'Only Super Admin can create new admins' });
+            res.status(400).json(result);
         }
     } catch (error) {
         console.error('Error creating admin:', error);
@@ -1430,6 +1475,10 @@ app.put('/api/admin/admins/:username/role', authenticateToken, (req, res) => {
 
         if (!role) {
             return res.status(400).json({ error: 'Role is required' });
+        }
+
+        if (RoleManager.normalizeRole(req.user.role) !== 'superAdmin') {
+            return res.status(403).json({ error: 'Only Super Admin can update admin roles' });
         }
 
         const data = loadData();
@@ -1455,6 +1504,11 @@ app.put('/api/admin/admins/:username/role', authenticateToken, (req, res) => {
 app.post('/api/admin/admins/:username/deactivate', authenticateToken, (req, res) => {
     try {
         const { username } = req.params;
+
+        if (RoleManager.normalizeRole(req.user.role) !== 'superAdmin') {
+            return res.status(403).json({ error: 'Only Super Admin can deactivate admins' });
+        }
+
         const data = loadData();
         const result = RoleManager.deactivateAdmin(data, username);
 

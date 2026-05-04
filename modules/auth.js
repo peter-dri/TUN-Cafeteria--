@@ -63,7 +63,11 @@ const AuthModule = (() => {
     }
 
     function isSuperAdmin() {
-        return currentAdmin && currentAdmin.role === 'Super Admin';
+        return currentAdmin && (
+            currentAdmin.role === 'Super Admin' ||
+            currentAdmin.role === 'superAdmin' ||
+            currentAdmin.role === 'admin'
+        );
     }
 
     return {

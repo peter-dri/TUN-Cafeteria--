@@ -29,6 +29,22 @@ const AdminModule = (() => {
                 data.orderHistory = [];
             }
 
+            if (!Array.isArray(data.adminAccounts)) {
+                data.adminAccounts = [];
+            }
+
+            if (!Array.isArray(data.activityLog)) {
+                data.activityLog = [];
+            }
+
+            if (!data.reviews || typeof data.reviews !== 'object') {
+                data.reviews = {};
+            }
+
+            if (!data.mpesaSessions || typeof data.mpesaSessions !== 'object') {
+                data.mpesaSessions = {};
+            }
+
             appData = data;
             return appData;
         } catch (error) {
@@ -1056,6 +1072,7 @@ const AdminModule = (() => {
         }
 
         const currentAdmin = AuthModule.getCurrentAdmin();
+        const currentAdminUsername = currentAdmin ? currentAdmin.username : null;
 
         appData.adminAccounts.forEach(admin => {
             const div = document.createElement('div');
@@ -1070,18 +1087,19 @@ const AdminModule = (() => {
             strong.textContent = admin.username;
             const p = document.createElement('p');
             p.style.margin = '0';
-            p.innerHTML = `${admin.role} <span style="color: ${admin.active ? '#2E3192' : '#718096'}; font-weight: ${admin.active ? 600 : 400};">${statusBadge}</span> ${admin.id === currentAdmin.id ? '(You)' : ''}`;
+            const roleLabel = admin.roleName || admin.role || 'Unknown';
+            p.innerHTML = `${roleLabel} <span style="color: ${admin.active ? '#2E3192' : '#718096'}; font-weight: ${admin.active ? 600 : 400};">${statusBadge}</span> ${admin.username === currentAdminUsername ? '(You)' : ''}`;
             info.appendChild(strong);
             info.appendChild(p);
 
             const actions = document.createElement('div');
             actions.className = 'admin-actions';
 
-            if (admin.id !== currentAdmin.id) {
+            if (admin.username !== currentAdminUsername) {
                 const removeBtn = document.createElement('button');
                 removeBtn.className = 'btn btn-secondary btn-sm';
                 removeBtn.textContent = 'Remove';
-                removeBtn.addEventListener('click', () => AdminModule.removeAdmin(admin.id));
+                removeBtn.addEventListener('click', () => AdminModule.removeAdmin(admin.username));
                 actions.appendChild(removeBtn);
             }
 
@@ -1102,35 +1120,31 @@ const AdminModule = (() => {
             throw new Error('Username already exists');
         }
 
-        // Get max ID
-        let maxId = 0;
-        appData.adminAccounts.forEach(a => {
-            if (a.id > maxId) maxId = a.id;
-        });
-
         const newAdmin = {
-            id: maxId + 1,
             username,
             password,
             role,
-            active: true
+            active: true,
+            createdAt: new Date().toLocaleString(),
+            lastLogin: null
         };
 
         appData.adminAccounts.push(newAdmin);
         await saveData();
+        await loadData();
         return true;
     }
 
-    async function removeAdmin(adminId) {
+    async function removeAdmin(adminUsername) {
         if (!await Confirm.confirm('Are you sure you want to remove this admin?')) return;
 
         const currentAdmin = AuthModule.getCurrentAdmin();
-        if (adminId === currentAdmin.id) {
+        if (currentAdmin && adminUsername === currentAdmin.username) {
             alert('You cannot remove yourself!');
             return;
         }
 
-        appData.adminAccounts = appData.adminAccounts.filter(a => a.id !== adminId);
+        appData.adminAccounts = appData.adminAccounts.filter(a => a.username !== adminUsername);
         await saveData();
         await loadData();
         renderAdmins('adminsList');
@@ -1189,10 +1203,14 @@ const AdminModule = (() => {
 
             const result = await response.json();
 
-            // Update local data
-            order.paymentStatus = 'Paid';
+            if (result && result.order) {
+                order.paymentStatus = result.order.paymentStatus || 'Paid';
+            } else {
+                order.paymentStatus = 'Paid';
+            }
 
-            // Refresh the orders display
+            await loadData();
+            // Refresh the orders display from current appData
             renderOrders('ordersList');
 
             alert(`✓ Payment confirmed!\\n\\nOrder #${orderNumber} is now PAID.\\nTotal: KSh ${order.total}`);

@@ -48,9 +48,28 @@ const RoleManager = (() => {
         }
     };
 
+    function normalizeRole(roleName) {
+        if (!roleName) return null;
+
+        const raw = String(roleName).trim();
+        if (roles[raw]) return raw;
+
+        const normalized = raw.toLowerCase();
+        if (normalized === 'super admin' || normalized === 'superadmin') return 'superAdmin';
+        if (normalized === 'manager') return 'manager';
+        if (normalized === 'staff') return 'staff';
+
+        return null;
+    }
+
+    function getRoleDisplayName(roleName) {
+        const key = normalizeRole(roleName);
+        return key ? roles[key].name : roleName;
+    }
+
     // Check if user has permission
     function hasPermission(userRole, permission) {
-        const role = roles[userRole];
+        const role = roles[normalizeRole(userRole) || userRole];
         return role && role.permissions.includes(permission);
     }
 
@@ -66,7 +85,7 @@ const RoleManager = (() => {
 
     // Get role info
     function getRoleInfo(roleName) {
-        return roles[roleName] || null;
+        return roles[normalizeRole(roleName) || roleName] || null;
     }
 
     // Get all roles
@@ -115,13 +134,15 @@ const RoleManager = (() => {
     function createAdmin(data, username, password, role) {
         if (!data.adminAccounts) data.adminAccounts = [];
 
+        const roleKey = normalizeRole(role);
+
         // Check if admin exists
         if (data.adminAccounts.some(a => a.username === username)) {
             return { success: false, error: 'Username already exists' };
         }
 
         // Validate role
-        if (!roles[role]) {
+        if (!roleKey) {
             return { success: false, error: 'Invalid role' };
         }
 
@@ -129,7 +150,7 @@ const RoleManager = (() => {
         data.adminAccounts.push({
             username,
             password, // ⚠️ TODO: Hash this in production
-            role,
+            role: roleKey,
             createdAt: new Date().toLocaleString(),
             lastLogin: null,
             active: true
@@ -137,13 +158,14 @@ const RoleManager = (() => {
 
         return {
             success: true,
-            message: `Admin ${username} created with role: ${roles[role].name}`
+            message: `Admin ${username} created with role: ${roles[roleKey].name}`
         };
     }
 
     // Update admin role
     function updateAdminRole(data, username, newRole) {
-        if (!roles[newRole]) {
+        const roleKey = normalizeRole(newRole);
+        if (!roleKey) {
             return { success: false, error: 'Invalid role' };
         }
 
@@ -153,11 +175,11 @@ const RoleManager = (() => {
         }
 
         const oldRole = admin.role;
-        admin.role = newRole;
+        admin.role = roleKey;
 
         return {
             success: true,
-            message: `${username} role changed from ${oldRole} to ${newRole}`
+            message: `${username} role changed from ${getRoleDisplayName(oldRole)} to ${roles[roleKey].name}`
         };
     }
 
@@ -178,6 +200,7 @@ const RoleManager = (() => {
         return data.adminAccounts.map(a => ({
             username: a.username,
             role: a.role,
+            roleName: getRoleDisplayName(a.role),
             createdAt: a.createdAt,
             lastLogin: a.lastLogin,
             active: a.active
@@ -189,6 +212,8 @@ const RoleManager = (() => {
         hasAllPermissions,
         hasAnyPermission,
         getRoleInfo,
+        normalizeRole,
+        getRoleDisplayName,
         getAllRoles,
         logActivity,
         getActivityLog,
