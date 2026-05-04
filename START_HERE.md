@@ -1,5 +1,15 @@
 # 🔧 Admin Panel Fixed - Start Here
 
+> Historical onboarding note: this file documents a specific admin fix/testing workflow.
+>
+> For current canonical system flow and API route mapping, use `README.md` and `SYSTEM_ANALYSIS.md`.
+
+## Canonical Context
+
+- Active runtime uses `server.js` + `data.json`.
+- Current order creation endpoint is `POST /api/orders`.
+- Admin data route `GET /api/data` is authenticated.
+
 ## What Was Fixed
 
 I've identified and fixed the issues preventing your inventory and quick order from working:

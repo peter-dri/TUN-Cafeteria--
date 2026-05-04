@@ -1,5 +1,14 @@
 # M-Pesa STK Push Implementation Summary
 
+> Implementation snapshot: this document explains the M-Pesa STK push feature rollout.
+>
+> Canonical current architecture and route mapping is maintained in `SYSTEM_ANALYSIS.md` and onboarding details in `README.md`.
+
+## Scope Note
+
+- This file is feature-specific (M-Pesa implementation history), not the full system source of truth.
+- Current order creation route in active runtime is `POST /api/orders`.
+
 ## Overview
 Implemented M-Pesa STK Push payment functionality across the Tharaka Cafeteria system, enabling automatic payment prompts on customer phones without manual entry.
 

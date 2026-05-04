@@ -280,7 +280,7 @@ app.get('/api/menu-state', (req, res) => {
  * GET /api/data
  * Get all cafeteria data (menu, orders, preferences, etc.)
  */
-app.get('/api/data', (req, res) => {
+app.get('/api/data', authenticateToken, (req, res) => {
     try {
         const data = loadData();
         const includeOrderHistory = req.query.includeOrderHistory !== 'false';

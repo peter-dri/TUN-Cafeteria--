@@ -1,5 +1,15 @@
 # 🚀 Quick Fix Guide - Inventory & Quick Order
 
+> Historical troubleshooting guide: this document captures a specific admin panel fix cycle.
+>
+> For current architecture, API routes, and onboarding flow, use `README.md` and `SYSTEM_ANALYSIS.md`.
+
+## Canonical Context
+
+- Active runtime is JSON-first (`data.json`) through `server.js`.
+- Current order creation endpoint is `POST /api/orders`.
+- `GET /api/data` is admin-authenticated.
+
 ## ✅ What I Fixed
 
 Your inventory and quick order weren't working because of:
@@ -79,7 +89,7 @@ npm start
 # Look for red errors
 
 # 3. Verify data.json exists
-dir data.json
+ls data.json
 ```
 
 ### Problem: Can't add items to cart

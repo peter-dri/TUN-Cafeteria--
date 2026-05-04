@@ -5,7 +5,12 @@ const AdminModule = (() => {
 
     async function loadData() {
         try {
-            const response = await fetch('/api/data');
+            const token = AuthModule.getToken();
+            const headers = token
+                ? { 'Authorization': `Bearer ${token}` }
+                : {};
+
+            const response = await fetch('/api/data', { headers });
             if (!response.ok) {
                 throw new Error(`Failed to load data (HTTP ${response.status})`);
             }
@@ -260,8 +265,8 @@ const AdminModule = (() => {
                 // If M-Pesa, initiate STK push
                 if (method === 'mpesa') {
                     try {
-                        // Get auth token from localStorage
-                        const token = localStorage.getItem('authToken');
+                        // Use centralized auth state to avoid token key mismatches.
+                        const token = AuthModule.getToken();
                         if (!token) {
                             alert('Session expired. Please login again.');
                             return;
